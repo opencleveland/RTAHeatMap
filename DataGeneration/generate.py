@@ -4,8 +4,10 @@
 # The end goal of this dataset is to produce a heat map reflecting the
 # accessibility of public transportation throughout the city.
 
-import math
-import pandas as pd
+import math           #To do math
+import pandas as pd   #To store our datasets
+import dbfread as dbf #To read our .dbf file
+import csv            #To write to .csv
  
 # Method for calculating distance
 def distance_on_unit_sphere(lat1, long1, lat2, long2):
@@ -43,10 +45,22 @@ def distance_on_unit_sphere(lat1, long1, lat2, long2):
 def get_stops():
     return pd.read_csv("stops.csv")
 
+# Method to Convert or .dbf file to csv
+def convert_addresses_to_csv():
+    with open('addresses.csv', 'wb') as csvfile:
+        headerexists = False
+        for rec in dbf.DBF('LBRS_Site.dbf'):
+            if headerexists == False:
+                writer = csv.DictWriter(csvfile, fieldnames=rec.keys())
+                writer.writeheader()
+                headerexists = True
+            writer.writerow(rec)
+
 # Method to Load in all Addresses from the Cuyahoga
 
 # Method to Save the closest 20 Stops for each Address to an 
 # output .csv or JSON (whichever is better for the google API)
+
 
 # Method to loop through every address
 	# and every stop
