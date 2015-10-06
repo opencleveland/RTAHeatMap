@@ -13,8 +13,7 @@ import csv            #To write to .csv
 def distance_on_unit_sphere(lat1, long1, lat2, long2):
 	#Source: http://www.johndcook.com/blog/python_longitude_latitude/
 	
-    # Convert latitude and longitude to 
-    # spherical coordinates in radians.
+    # Convert latitude and longitude to spherical coordinates in radians.
     degrees_to_radians = math.pi/180.0
          
     # phi = 90 - latitude
@@ -26,26 +25,18 @@ def distance_on_unit_sphere(lat1, long1, lat2, long2):
     theta2 = long2*degrees_to_radians
          
     # Compute spherical distance from spherical coordinates.
-         
-    # For two locations in spherical coordinates 
-    # (1, theta, phi) and (1, theta', phi')
-    # cosine( arc length ) = 
-    #    sin phi sin phi' cos(theta-theta') + cos phi cos phi'
-    # distance = rho * arc length
-     
     cos = (math.sin(phi1)*math.sin(phi2)*math.cos(theta1 - theta2) + 
            math.cos(phi1)*math.cos(phi2))
     arc = math.acos( cos )
 	
-	#Units Assume radius of 1 . Units Irrelevant as we're only comparing.
-    return arc 
+    radius_of_earth = 3959 #Miles
+    return arc * radius_of_earth
 	
-# Method to Load in all Descriptions-Latitude-Longitudes from stops.csv
-	# Perhaps a pandas dataframe?
+# Load stops into a pandas dataframe
 def get_stops():
     return pd.read_csv("stops.csv")
 
-# Method to Convert or .dbf file to csv
+# Convert addresses.dbf file to csv
 def convert_addresses_to_csv():
     with open('addresses.csv', 'wb') as csvfile:
         headerexists = False
@@ -56,15 +47,33 @@ def convert_addresses_to_csv():
                 headerexists = True
             writer.writerow(rec)
 
-# Method to Load in all Addresses from the Cuyahoga
+# Load addresses into a pandas dataframe
+def get_addresses():
+    return pd.read_csv("sparse_addresses.csv")
 
-# Method to Save the closest 20 Stops for each Address to an 
-# output .csv or JSON (whichever is better for the google API)
+# Method to calculate and save the closest n_stops Stops for each address to 
+# an output .csv file
+def get_closest_stops_for_each_address(addresses, stops, n_stops):
+    columns = ['stop_lat','stop_lon','addr_lat','addr_lon','distance']
+    df = pd.DataFrame(columns = columns)     
+    for i, addr in addresses.iterrows():
+        stop_df = pd.DataFrame(columns = columns)
+        for j, stop in stops.iterrows():
+            dist = distance_on_unit_sphere(stop['stop_lat'], stop['stop_lon'], 
+                                           addr['addr_lat'], addr['addr_lon'])
+            stop_df.loc[j] = [stop['stop_lat'], stop['stop_lon'], 
+                              addr['addr_lat'], addr['addr_lon'], dist]
+        #Sort the DataFrame, Add the n_stops entries with lowest distance to df
+        stop_df = stop_df.sort('distance')
+        stop_df = stop_df.head(n_stops)
+        
+        #Append what we've found to our DataFrame we will Return
+        df = df.append(stop_df)                
+    return df
 
+finaldf = get_closest_stops_for_each_address(get_addresses(), get_stops(), 5)
+finaldf.to_csv("output.csv")
 
-# Method to loop through every address
-	# and every stop
-		# and feed the top 20 closest stops to the Save method above
-
-#for stop in get_stops().iterrows():
-    #print(stop)
+# Method to Run the top n_stops for each address into the Google API, and 
+# output only the closest of the 5 stops.
+# TODO: Implement
