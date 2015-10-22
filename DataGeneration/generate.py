@@ -61,7 +61,6 @@ def single_gmaps_output(addr_lat, addr_lon, stop_lat, stop_lon,
                                          destinations={'lat': stop_lat,
                                                        'lng': stop_lon},
                                          mode='walking')
-            print(dist)
             # If we've failed more than the threshold paramter number of times
             # then return dummy data
             if times_run > threshold: # failed too many times, return dummy data
@@ -104,7 +103,7 @@ def single_gmaps_output(addr_lat, addr_lon, stop_lat, stop_lon,
                      stop_lat,
                      stop_lon,
                      dist['destination_addresses'][0],
-                     times_run]
+                     times_run + 1]
         return outputrow
 
 
@@ -119,7 +118,7 @@ def get_closest_stops_for_each_address(addresses, stops, n_stops):
                         'straight_line_distance',
                         'addr_lat', 'addr_lon', 'addr_address',
                         'stop_lat', 'stop_lon', 'stop_address',
-                        'total_api_calls',
+                        'total_api_calls', 'address_num',
                         'closest']
     output_df = pd.DataFrame(columns=pair_api_columns)
     for i, addr in addresses.iterrows():
@@ -147,23 +146,22 @@ def get_closest_stops_for_each_address(addresses, stops, n_stops):
                                          pair['stop_lat'], pair['stop_lon'],
                                          pair['sl_dist'], 10, 10)
             try:
-                pair_api_df.loc[gl_index] = (newrow + [False])
+                pair_api_df.loc[gl_index] = (newrow + [i, False])
             except ValueError:
-                # Sometimes newrow is only 12 cols when it needs to be 13.
+                # Sometimes newrow is only 13 cols when it needs to be 14.
                 # don't know why. This just adds another value to the array.
                 # A better solution may just be to make a one-row dataframe,
                 # that way we can append, and pandas will automatically
                 # match the columns up.
                 print('Value Error!')
-                pair_api_df.loc[gl_index] = (newrow + [False] + [''])
+                pair_api_df.loc[gl_index] = (newrow + [i, False, False])
             gl_index += 1
         # Assign True to the 'closest' column of the address-stop pair that
         # has the minimum walking distance for this address
-        pair_api_df.loc[pair_api_df['distance_value'].idxmin()][
-                'closest'] = True
+        min_distance_index = pair_api_df['distance_value'].idxmin()
+        pair_api_df.ix[min_distance_index,'closest'] = True
         output_df = output_df.append(pair_api_df)
     return output_df
-
 
 finaldf = get_closest_stops_for_each_address(get_addresses(), get_stops(), 5)
 finaldf.to_csv("output.csv")
