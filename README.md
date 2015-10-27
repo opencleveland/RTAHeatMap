@@ -1,6 +1,12 @@
 # RTAHeatMap
 The purpose of this project is to generate a map which displays how easy it is to get from any location to the nearest public transportation stop by foot. The color of each point corresponds to the walking distance (not straight-line distance) to the nearest stop.
 
+## Project Steps
+
+1. Generate the data underlying the heatmap
+2. Use the generated data to build an appropriate heatmap layer
+3. Build the map which displays the heatmap and RTA stops
+
 ## Contributing
 
 To contribute to this project:
