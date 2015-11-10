@@ -8,9 +8,21 @@ import pandas as pd    # For the dataframe
 import numpy as np     # To calculate ranges with float step-values
 import math            # For math
 
-def GenerateUniformCoordinates(lat_min, lat_max, 
-                               lng_min, lng_max,
-                               lat_res, lng_res):
+# These values are the degrees walked per minute at a speed of 3.1 miles per
+# hour at 41.4822 deg N and 81.6697 deg W, which is the center of Cleveland
+LATITUDE_RESOLUTION = 0.000724516
+LONGITUDE_RESOLUTION = 0.000963461
+LATITUDE_MINIMUM = 41.227883
+LATITUDE_MAXIMUM = 41.637051
+LONGITUDE_MINIMUM = -81.96753
+LONGITUDE_MAXIMUM = -81.438542
+
+def GenerateUniformCoordinates(lat_min,
+                               lat_max,
+                               lng_min,
+                               lng_max,
+                               lat_res,
+                               lng_res):
                                  
   # Calculate the number of rows our output DataFrame will contain so that we
   # can pre-allocate the memory for the dataframe using the index property.
@@ -36,15 +48,10 @@ def GenerateUniformCoordinates(lat_min, lat_max,
       row_num += 1 #increment our row number
   return df
 
-# These values are the degrees walked per minute at a speed of 3.1 miles per
-# hour at 41.4822 deg N and 81.6697 deg W, which is the center of Cleveland
-lat_res = 0.000724516 
-lng_res = 0.000963461
-lat_min = 41.227883
-lat_max = 41.637051
-lng_min = -81.96753
-lng_max = -81.438542
-output_df = GenerateUniformCoordinates(lat_min, lat_max,
-                                       lng_min, lng_max,
-                                       lat_res, lng_res)
+output_df = GenerateUniformCoordinates(LATITUDE_MINIMUM,
+                                       LATITUDE_MAXIMUM,
+                                       LONGITUDE_MINIMUM,
+                                       LONGITUDE_MAXIMUM,
+                                       LATITUDE_RESOLUTION,
+                                       LONGITUDE_RESOLUTION)
 output_df.to_csv('uniform_addresses.csv')

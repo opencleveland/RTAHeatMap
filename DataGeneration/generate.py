@@ -1,5 +1,5 @@
 # The objective of this script is to generate a dataset that is the closest
-# 20 stops for a list of addresses. The stops are public transportation stops,
+# 5 stops for a list of addresses. The stops are public transportation stops,
 # and the addresses are randomly distributed addresses throughout a city.
 # The end goal of this dataset is to produce a heat map reflecting the
 # accessibility of public transportation throughout the city.
@@ -9,9 +9,10 @@ import pandas as pd  # To store and manipulate our datasets
 import googlemaps  # To do our API calls
 import time  # To sleep if the API call fails
 
-ClientKey = '<Insert API Key>'
+ClientKey = '<INSERT API KEY>'
 gmaps = googlemaps.Client(key=ClientKey)
 
+GMAPS_QUERIES_PER_ADDRESS = 5
 
 # Method for calculating distance
 def distance_on_unit_sphere(lat1, long1, lat2, long2):
@@ -44,14 +45,14 @@ def get_stops():
 
 # Load addresses into a pandas dataframe
 def get_addresses():
-    return pd.read_csv("sparse_addresses.csv")
+    return pd.read_csv("uniform_addresses_clinic.csv")
 
 
 # Returns the google API output of the two locations or dummy data if it fails
 # to get valid data too many times. It will sleep 10 seconds if it doesn't get
 # valid input and then try again. 
 def single_gmaps_output(addr_lat, addr_lon, stop_lat, stop_lon,
-                        sl_dist, wait=10, threshold=10):
+                        sl_dist, wait=10, threshold=3):
     done = False
     times_run = 0
     while not done:
@@ -112,13 +113,24 @@ def single_gmaps_output(addr_lat, addr_lon, stop_lat, stop_lon,
 # data.
 def get_closest_stops_for_each_address(addresses, stops, n_stops):
     gl_index = 0
-    pair_columns = ['stop_lat', 'stop_lon', 'addr_lat', 'addr_lon', 'sl_dist']
-    pair_api_columns = ['duration_value', 'duration',
-                        'distance_value', 'distance',
+    pair_columns = ['stop_lat',
+                    'stop_lon',
+                    'addr_lat',
+                    'addr_lon',
+                    'sl_dist']
+    pair_api_columns = ['duration_value',
+                        'duration',
+                        'distance_value',
+                        'distance',
                         'straight_line_distance',
-                        'addr_lat', 'addr_lon', 'addr_address',
-                        'stop_lat', 'stop_lon', 'stop_address',
-                        'total_api_calls', 'address_num',
+                        'addr_lat',
+                        'addr_lon',
+                        'addr_address',
+                        'stop_lat',
+                        'stop_lon',
+                        'stop_address',
+                        'total_api_calls',
+                        'address_num',
                         'closest']
     output_df = pd.DataFrame(columns=pair_api_columns)
     for i, addr in addresses.iterrows():
@@ -163,5 +175,7 @@ def get_closest_stops_for_each_address(addresses, stops, n_stops):
         output_df = output_df.append(pair_api_df)
     return output_df
 
-finaldf = get_closest_stops_for_each_address(get_addresses(), get_stops(), 5)
-finaldf.to_csv("output.csv")
+finaldf = get_closest_stops_for_each_address(get_addresses(),
+                                             get_stops(),
+                                             GMAPS_QUERIES_PER_ADDRESS)
+finaldf.to_csv("output_test_.csv")
