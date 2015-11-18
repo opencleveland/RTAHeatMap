@@ -34,14 +34,14 @@ class UniformMapGenerator:
 
         output_df = self.instantiate_output_dataframe(total_coordinate_rows)
 
-        # Iterate through each latitude and each longitude calculated with the
-        # np.arange function, adding lat_res to the max value to ensure that we
-        # include the max value in the range that we iterate through
+        # Iterate through our latitudes and longitudes, adding all pairs
+        # to the output array
         row_num = 0
-        for lat in np.arange(lat_min, lat_max + lat_res, lat_res):
-            for lng in np.arange(lng_min, lng_max + lng_res, lng_res):
-                output_df.loc[row_num] = [lat, lng] #Add the lat/lng pair to the dataframe
-                row_num += 1 #increment our row number
+        for lat in self.get_next_coordinate(lat_min, lat_max, lat_res):
+            for lng in self.get_next_coordinate(lng_min, lng_max, lng_res):
+                # Add the lat/lng pair to the output dataframe
+                output_df.loc[row_num] = [lat, lng]
+                row_num += 1
         return output_df
 
     # Returns the number of intervals (int) between minimum and maximum that
