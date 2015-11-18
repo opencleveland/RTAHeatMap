@@ -14,14 +14,14 @@ class UniformMapGenerator:
     def __init__(self):
         pass
 
-    def GetUniformCoordinateMap(self,
-                                lat_min,
-                                lat_max,
-                                lng_min,
-                                lng_max,
-                                lat_res,
-                                lng_res,
-                                debug=False):
+    def get_uniform_coordinate_map(self,
+                                   lat_min,
+                                   lat_max,
+                                   lng_min,
+                                   lng_max,
+                                   lat_res,
+                                   lng_res,
+                                   debug=False):
 
         latitude_num = self.get_number_of_intervals(lat_min, lat_max, lat_res)
         longitude_num = self.get_number_of_intervals(lng_min, lng_max, lng_res)
