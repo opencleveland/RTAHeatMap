@@ -24,16 +24,14 @@ class UniformMapGenerator:
 
         latitude_num = self.get_number_of_intervals(lat_min, lat_max, lat_res)
         longitude_num = self.get_number_of_intervals(lng_min, lng_max, lng_res)
-        total_coordinate_number = latitude_num * longitude_num
+        total_coordinate_rows = latitude_num * longitude_num
 
         # Output some data for debugging
         print('Latitude Quantity: ' + str(latitude_num))
         print('Longitude Quantity: ' + str(longitude_num))
-        print('Total Number of Rows to Output: ' + str(total_coordinate_number))
+        print('Total Number of Rows to Output: ' + str(total_coordinate_rows))
 
-        # Instantiate or DataFrame
-        df = pd.DataFrame(columns = ['lat','lng'],
-                          index=np.arange(0, total_coordinate_number))
+        output_df = self.instantiate_output_dataframe(total_coordinate_rows)
 
         # Iterate through each latitude and each longitude calculated with the
         # np.arange function, adding lat_res to the max value to ensure that we
@@ -41,15 +39,19 @@ class UniformMapGenerator:
         row_num = 0
         for lat in np.arange(lat_min, lat_max + lat_res, lat_res):
             for lng in np.arange(lng_min, lng_max + lng_res, lng_res):
-                df.loc[row_num] = [lat, lng] #Add the lat/lng pair to the dataframe
+                output_df.loc[row_num] = [lat, lng] #Add the lat/lng pair to the dataframe
                 row_num += 1 #increment our row number
-        return df
+        return output_df
 
     # Returns the number of intervals (int) between minimum and maximum that
     # include the minimum and maximum where each interval is 'resolution'
     # distance apart
     def get_number_of_intervals(self, minimum, maximum, resolution):
         return int(math.ceil((maximum - minimum) / resolution + 1))
+
+    def instantiate_output_dataframe(self, total_rows):
+        return pd.DataFrame(columns = ['addr_lat','addr_lon'],
+                            index = range(0, total_rows))
 
 
 # Example UniformMapGenerator Usage
