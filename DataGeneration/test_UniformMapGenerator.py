@@ -1,5 +1,5 @@
 import unittest
-from GenerateUniformAddresses import UniformMapGenerator
+from UniformMapGenerator import UniformMapGenerator
 import pandas
 
 
