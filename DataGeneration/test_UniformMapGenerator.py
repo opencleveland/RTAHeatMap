@@ -39,3 +39,15 @@ class TestUniformMapGenerator(unittest.TestCase):
         dataframe = generator.instantiate_output_dataframe(20)
         self.assertEqual(dataframe.columns[0], 'addr_lat')
         self.assertEqual(dataframe.columns[1], 'addr_lon')
+
+    def test_GetUniformCoordinateMap_returns_pandas_dataframe(self):
+        generator = UniformMapGenerator()
+        dataframe = generator.GetUniformCoordinateMap(1, 1, 1, 1, 1, 1)
+        self.assertIsInstance(dataframe, pandas.DataFrame)
+
+    def test_getUniformCoordinateMap_output_is_expected_length(self):
+        generator = UniformMapGenerator()
+        dataframe = generator.GetUniformCoordinateMap(1, 10,
+                                                      6, 20,
+                                                      1, 1)
+        self.assertEqual(len(dataframe), 150, "Output length should be 150")

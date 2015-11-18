@@ -20,16 +20,17 @@ class UniformMapGenerator:
                                 lng_min,
                                 lng_max,
                                 lat_res,
-                                lng_res):
+                                lng_res,
+                                debug=False):
 
         latitude_num = self.get_number_of_intervals(lat_min, lat_max, lat_res)
         longitude_num = self.get_number_of_intervals(lng_min, lng_max, lng_res)
         total_coordinate_rows = latitude_num * longitude_num
 
-        # Output some data for debugging
-        print('Latitude Quantity: ' + str(latitude_num))
-        print('Longitude Quantity: ' + str(longitude_num))
-        print('Total Number of Rows to Output: ' + str(total_coordinate_rows))
+        if debug:
+            print('Latitude Quantity: ' + str(latitude_num))
+            print('Longitude Quantity: ' + str(longitude_num))
+            print('Total Output Rows: ' + str(total_coordinate_rows))
 
         output_df = self.instantiate_output_dataframe(total_coordinate_rows)
 
@@ -51,7 +52,7 @@ class UniformMapGenerator:
 
     def instantiate_output_dataframe(self, total_rows):
         return pd.DataFrame(columns = ['addr_lat','addr_lon'],
-                            index = range(0, total_rows))
+                            index = xrange(0, total_rows))
 
 
 # Example UniformMapGenerator Usage
