@@ -54,6 +54,12 @@ class UniformMapGenerator:
         return pd.DataFrame(columns = ['addr_lat','addr_lon'],
                             index = xrange(0, total_rows))
 
+    # This functions identically to numpy.arange, except it is a generator
+    def get_next_coordinate(self, beginning, end, interval):
+        i = beginning
+        while i < end + interval:
+            yield i
+            i += interval
 
 # Example UniformMapGenerator Usage
 #  The example below will accept Latitude/Longitude parameters and output

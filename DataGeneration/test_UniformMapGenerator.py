@@ -42,13 +42,34 @@ class TestUniformMapGenerator(unittest.TestCase):
         self.assertEqual(dataframe.columns[0], 'addr_lat')
         self.assertEqual(dataframe.columns[1], 'addr_lon')
 
-    # GetUniformCoordinateMap tests
-    def test_GetUniformCoordinateMap_returns_pandas_dataframe(self):
+    # get_next_coordinate tests
+    def test_get_next_coordinate_first_two(self):
+        map_generator = UniformMapGenerator()
+        coordinate_gen = map_generator.get_next_coordinate(0.5, 5, 0.2)
+        self.assertEqual(coordinate_gen.next(), 0.5)
+        self.assertEqual(coordinate_gen.next(), 0.7)
+
+    def test_get_next_coordinate_last_coordinate_includes_end(self):
+        map_generator = UniformMapGenerator()
+        coordinate_gen = map_generator.get_next_coordinate(0.9, 1, 0.2)
+        self.assertEqual(coordinate_gen.next(), 0.9)
+        self.assertEqual(coordinate_gen.next(), 1.1)
+        self.assertRaises(StopIteration, coordinate_gen.next)
+
+    def test_get_next_coordinate_last_coordinate_doesnt_overshoot(self):
+        map_generator = UniformMapGenerator()
+        coordinate_gen = map_generator.get_next_coordinate(0.8, 1, 0.2)
+        self.assertEqual(coordinate_gen.next(), 0.8)
+        self.assertEqual(coordinate_gen.next(), 1)
+        self.assertRaises(StopIteration, coordinate_gen.next)
+
+    # get_uniform_coordinate_map tests
+    def test_get_uniform_coordinate_map_returns_pandas_dataframe(self):
         generator = UniformMapGenerator()
         dataframe = generator.get_uniform_coordinate_map(1, 1, 1, 1, 1, 1)
         self.assertIsInstance(dataframe, pandas.DataFrame)
 
-    def test_getUniformCoordinateMap_output_is_expected_length(self):
+    def test_get_uniform_coordinate_map_output_is_expected_length(self):
         generator = UniformMapGenerator()
         dataframe = generator.get_uniform_coordinate_map(1, 10,
                                                          6, 20,
