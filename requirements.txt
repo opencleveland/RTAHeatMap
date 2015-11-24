@@ -1,0 +1,3 @@
+dbfread
+pandas
+numpy
