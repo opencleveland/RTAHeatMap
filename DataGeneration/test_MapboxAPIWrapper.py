@@ -23,7 +23,7 @@ class TestMapboxAPIWrapper(unittest.TestCase):
         mock_os_path.exists.return_value = True
         with patch.object(builtins, 'open', mock_open(read_data='api_key')):
             self.wrapper.load_api_key_from_file()
-        self.assertTrue(mock_os_path.exists.called, "os.path.exists was not called")
+        mock_os_path.exists.assert_called_once_with('api_key.txt')
 
     @patch('MapboxAPIWrapper.os.path')
     def test_mapbox_load_api_key_from_file_fails_bad_path(self, mock_os_path):
@@ -36,6 +36,13 @@ class TestMapboxAPIWrapper(unittest.TestCase):
         with patch.object(builtins, 'open', mock_open(read_data='api_key')):
             self.wrapper.load_api_key_from_file(filename='abc.txt')
         self.assertEquals('api_key', self.wrapper.key)
+
+    @patch('MapboxAPIWrapper.os.path')
+    def test_mapbox_load_api_key_from_file_accepts_filename(self, mock_os_path):
+        mock_os_path.exists.return_value = True
+        with patch.object(builtins, 'open', mock_open(read_data='api_key')):
+            self.wrapper.load_api_key_from_file(filename='abc.txt')
+        mock_os_path.exists.assert_called_once_with('abc.txt')
 
     # set_origin_location tests
     def test_mapbox_set_origin_location_is_MapLocation(self):
@@ -88,7 +95,8 @@ class TestMapboxAPIWrapper(unittest.TestCase):
                          '50.032,40.54453;51.0345,41.2314.json?alternatives='
                          'false&instructions=text&geometry=false&steps=false&&'
                          'access_token=api_key',
-                         self.wrapper.construct_request_string())
+                         self.wrapper.construct_request_string(),
+                         'incorrect request string returned')
 
     # make_api_call tests
     @patch('MapboxAPIWrapper.requests.get')
@@ -145,11 +153,22 @@ class TestMapboxAPIWrapper(unittest.TestCase):
         self.assertEqual(response_dict, expected_dict)
 
     # get_distance_from_api tests
+    @patch('MapboxAPIWrapper.MapboxAPIWrapper.make_api_call')
     @patch('MapboxAPIWrapper.MapboxAPIWrapper.construct_request_string')
     def test_get_distance_from_api_constructs_request_string(self,
-                                                             mock_construct):
-        mock_construct.return_value = 'api_request'
-        self.wrapper = MapboxAPIWrapper()
+                                                             mock_construct,
+                                                             mock_call):
+        mock_construct.return_value = 'request_string'
+        mock_call.return_value = []
         self.wrapper.get_distance_from_api()
-        self.assertTrue(mock_construct.called, 'api call must construct '
-                                                    'request string')
+        mock_construct.assert_called_once_with()
+
+    @patch('MapboxAPIWrapper.MapboxAPIWrapper.make_api_call')
+    @patch('MapboxAPIWrapper.MapboxAPIWrapper.construct_request_string')
+    def test_get_distance_from_api_calls_make_api_call(self,
+                                                       mock_construct,
+                                                       mock_call):
+        mock_construct.return_value = 'request_string'
+        mock_call.return_value = []
+        self.wrapper.get_distance_from_api()
+        mock_call.assert_called_once_with('request_string')

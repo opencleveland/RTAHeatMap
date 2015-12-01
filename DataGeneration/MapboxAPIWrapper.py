@@ -46,4 +46,4 @@ class MapboxAPIWrapper:
 
     def get_distance_from_api(self):
         request_string = self.construct_request_string()
-        pass
+        return self.make_api_call(request_string)
