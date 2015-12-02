@@ -13,6 +13,42 @@ class TestMapboxAPIWrapper(unittest.TestCase):
 
     def setUp(self):
         self.wrapper = MapboxAPIWrapper()
+        self.expected_dict = {
+            u'origin': {
+                u'geometry': {
+                    u'type': u'Point',
+                    u'coordinates': [
+                        50.032,
+                        40.54453
+                    ]
+                },
+                u'type': u'Feature',
+                u'properties': {
+                    u'name': u'McAllister Street'
+                }
+            },
+            u'routes': [
+                {
+                    u'duration': 61045,
+                    u'distance': 221074,
+                    u'steps': [],
+                    u'summary': u''
+                }
+            ],
+            u'destination': {
+                u'geometry': {
+                    u'type': u'Point',
+                    u'coordinates': [
+                        51.0345,
+                        41.2314
+                    ]
+                },
+                u'type': u'Feature',
+                u'properties': {
+                    u'name': u'Logan Circle Northwest'
+                }
+            },
+            u'waypoints': []}
 
     def test_mapbox_api_wrapper_class_exists(self):
         self.assertIsInstance(self.wrapper, MapboxAPIWrapper)
@@ -102,44 +138,8 @@ class TestMapboxAPIWrapper(unittest.TestCase):
     @patch('MapboxAPIWrapper.requests.get')
     def test_make_api_call_calls_urlopen(self, mock_get):
         mock_response = mock.Mock()
-        expected_dict = {
-            u'origin': {
-                u'geometry': {
-                    u'type': u'Point',
-                    u'coordinates': [
-                        50.032,
-                        40.54453
-                    ]
-                },
-                u'type': u'Feature',
-                u'properties': {
-                    u'name': u'McAllister Street'
-                }
-            },
-            u'routes': [
-                {
-                    u'duration': 163538,
-                    u'distance': 4524359,
-                    u'steps': [],
-                    u'summary': u''
-                }
-            ],
-            u'destination': {
-                u'geometry': {
-                    u'type': u'Point',
-                    u'coordinates': [
-                        51.0345,
-                        41.2314
-                    ]
-                },
-                u'type': u'Feature',
-                u'properties': {
-                    u'name': u'Logan Circle Northwest'
-                }
-            },
-            u'waypoints': []}
 
-        mock_response.json.return_value = expected_dict
+        mock_response.json.return_value = self.expected_dict
         mock_get.return_value = mock_response
 
         url = 'https://api.mapbox.com/v4/directions/mapbox.walking/' \
@@ -150,7 +150,7 @@ class TestMapboxAPIWrapper(unittest.TestCase):
         response_dict = self.wrapper.call_api(request_url=url)
         mock_get.assert_called_once_with(url=url)
         mock_response.json.assert_called_once_with()
-        self.assertEqual(response_dict, expected_dict)
+        self.assertEqual(response_dict, self.expected_dict)
 
     # get_distance_from_api tests
     @patch('MapboxAPIWrapper.MapboxAPIWrapper.call_api')
