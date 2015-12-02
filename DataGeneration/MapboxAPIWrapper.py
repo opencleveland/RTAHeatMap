@@ -40,10 +40,10 @@ class MapboxAPIWrapper:
         request_string += self.key
         return request_string
 
-    def make_api_call(self, request_url):
+    def call_api(self, request_url):
         response = requests.get(url = request_url)
         return response.json()
 
     def get_distance_from_api(self):
         request_string = self.construct_request_string()
-        return self.make_api_call(request_string)
+        return self.call_api(request_string)

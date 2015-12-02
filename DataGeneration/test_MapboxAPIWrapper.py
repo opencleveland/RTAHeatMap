@@ -147,13 +147,13 @@ class TestMapboxAPIWrapper(unittest.TestCase):
               'false&instructions=text&geometry=false&steps=false&&' \
               'access_token=api_key'
 
-        response_dict = self.wrapper.make_api_call(request_url=url)
+        response_dict = self.wrapper.call_api(request_url=url)
         mock_get.assert_called_once_with(url=url)
         mock_response.json.assert_called_once_with()
         self.assertEqual(response_dict, expected_dict)
 
     # get_distance_from_api tests
-    @patch('MapboxAPIWrapper.MapboxAPIWrapper.make_api_call')
+    @patch('MapboxAPIWrapper.MapboxAPIWrapper.call_api')
     @patch('MapboxAPIWrapper.MapboxAPIWrapper.construct_request_string')
     def test_get_distance_from_api_constructs_request_string(self,
                                                              mock_construct,
@@ -163,7 +163,7 @@ class TestMapboxAPIWrapper(unittest.TestCase):
         self.wrapper.get_distance_from_api()
         mock_construct.assert_called_once_with()
 
-    @patch('MapboxAPIWrapper.MapboxAPIWrapper.make_api_call')
+    @patch('MapboxAPIWrapper.MapboxAPIWrapper.call_api')
     @patch('MapboxAPIWrapper.MapboxAPIWrapper.construct_request_string')
     def test_get_distance_from_api_calls_make_api_call(self,
                                                        mock_construct,
