@@ -35,8 +35,8 @@ class MapboxAPIWrapper:
         request_string += str(self.origin.longitude) + ';'
         request_string += str(self.destination.latitude) + ','
         request_string += str(self.destination.longitude)
-        request_string += ('.json?alternatives=false&instructions=text&geometry='
-                           'false&steps=false&&access_token=')
+        request_string += ('.json?alternatives=false&instructions=text&'
+                           'geometry=false&steps=false&&access_token=')
         request_string += self.key
         return request_string
 
@@ -47,3 +47,8 @@ class MapboxAPIWrapper:
     def get_distance_from_api(self):
         request_string = self.construct_request_string()
         return self.call_api(request_string)
+
+    def parse_response(self, response_json):
+        walking_distance = response_json['routes'][0]['distance']
+        walking_duration = response_json['routes'][0]['duration']
+        return (walking_distance, walking_duration)

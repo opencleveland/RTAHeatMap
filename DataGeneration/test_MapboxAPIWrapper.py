@@ -172,3 +172,16 @@ class TestMapboxAPIWrapper(unittest.TestCase):
         mock_call.return_value = []
         self.wrapper.get_distance_from_api()
         mock_call.assert_called_once_with('request_string')
+
+    # parse_response tests
+    def test_parse_response_returns_tuple(self):
+        self.assertIsInstance(self.wrapper.parse_response(self.expected_dict),
+                              tuple)
+
+    def test_parse_response_returns_distance_value_in_first_element(self):
+        parsed_response = self.wrapper.parse_response(self.expected_dict)
+        self.assertEqual(221074, parsed_response[0])
+
+    def test_parse_response_returns_duration_value_in_second_element(self):
+        parsed_response = self.wrapper.parse_response(self.expected_dict)
+        self.assertEqual(61045, parsed_response[1])
