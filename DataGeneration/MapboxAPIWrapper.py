@@ -3,6 +3,7 @@ import requests
 from MapLocation import MapLocation
 import os
 
+
 class MapboxAPIWrapper:
     def __init__(self):
         pass
