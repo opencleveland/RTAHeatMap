@@ -1,7 +1,6 @@
 import unittest
-from mock import patch, mock
+from mock import patch
 from DatabaseHandler import DatabaseHandler
-import sqlite3
 import os
 
 
@@ -48,7 +47,7 @@ class TestDatabaseHandler(unittest.TestCase):
                                   "type='table' and name='test_table'")
         self.assertTrue(handler.db_cursor.fetchone(), "test_table not created")
 
-    # add_locations_from_csv tests
+    # add_rows_from_csv tests
     def test_handler_load_file_into_table_inserts_one_record(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         with open('test_file.csv', 'w') as f:
