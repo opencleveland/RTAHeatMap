@@ -1,5 +1,5 @@
 import unittest
-from mock import patch
+from mock import patch, MagicMock, Mock
 from DatabaseHandler import DatabaseHandler
 import os
 
@@ -25,29 +25,38 @@ class TestDatabaseHandler(unittest.TestCase):
         handler = DatabaseHandler()
         mock_sql.connect.assert_called_once_with('db.sqlite3')
 
-    def test_handler_constructor_creates_Source_table(self):
+    # construct_db tests
+    def test_construct_db_calls_add_address_table(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
-        c = handler.conn.cursor()
-        c.execute("select name from sqlite_master where "
-                  "type='table' and name='Source'")
-        self.assertTrue(c.fetchone(), "Source table not created in constructor")
+        mock_add_addresses = Mock()
+        handler._add_addresses_table = mock_add_addresses
+        mock_add_stops = Mock()
+        handler._add_stops_table = mock_add_stops
+        handler.construct_db()
+        self.assertTrue(mock_add_addresses.called,
+                        "construct_db did not call _add_addresses_table")
 
-    def test_handler_constructor_creates_Source_table(self):
+    def test_construct_db_calls_add_stop_table(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
-        c = handler.conn.cursor()
-        c.execute("select name from sqlite_master where "
-                  "type='table' and name='TransitStop'")
-        self.assertTrue(c.fetchone(),
-                        "TransitStop table not created in constructor")
+        mock_add_addresses = Mock()
+        handler._add_addresses_table = mock_add_addresses
+        mock_add_stops = Mock()
+        handler._add_stops_table = mock_add_stops
+        handler.construct_db()
+        self.assertTrue(mock_add_stops.called,
+                        "construct_db did not call _add_stops_table")
 
-    # _create_location_table tests
-    def test_handler_create_location_creates_table(self):
+    def test_construct_db_calls_add_route_table(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
-        handler._create_location_table_if_not_exists('test_table')
-        c = handler.conn.cursor()
-        c.execute("select name from sqlite_master where "
-                  "type='table' and name='test_table'")
-        self.assertTrue(c.fetchone(), "test_table not created")
+        mock_add_addresses = Mock()
+        handler._add_addresses_table = mock_add_addresses
+        mock_add_stops = Mock()
+        handler._add_stops_table = mock_add_stops
+        mock_add_routes = Mock()
+        handler._add_routes_table = mock_add_routes
+        handler.construct_db()
+        self.assertTrue(mock_add_routes.called,
+                        "construct_db did not call _add_routes_table")
 
     # add_rows_from_csv tests
     def test_handler_load_file_into_table_inserts_one_record(self):
@@ -61,3 +70,28 @@ class TestDatabaseHandler(unittest.TestCase):
         row = c.fetchone()
         self.assertEqual(8, row[0])
         self.assertEqual(12, row[1])
+
+    # table construction tests
+    def test_add_addresses_table_adds_table(self):
+        handler = DatabaseHandler('unit_test_db.sqlite3')
+        handler._add_addresses_table()
+        c = handler.conn.cursor()
+        c.execute("SELECT NAME FROM sqlite_master WHERE "
+                  "TYPE='table' and NAME='addresses'")
+        self.assertTrue(c.fetchone(), "addresses table not created")
+
+    def test_add_stops_table_adds_table(self):
+        handler = DatabaseHandler('unit_test_db.sqlite3')
+        handler._add_stops_table()
+        c = handler.conn.cursor()
+        c.execute("SELECT NAME FROM sqlite_master WHERE "
+                  "TYPE='table' and NAME='stops'")
+        self.assertTrue(c.fetchone(), "stops table not created")
+
+    def test_add_routes_table_adds_table(self):
+        handler = DatabaseHandler('unit_test_db.sqlite3')
+        handler._add_routes_table()
+        c = handler.conn.cursor()
+        c.execute("SELECT NAME FROM sqlite_master WHERE "
+                  "TYPE='table' AND NAME='routes'")
+        self.assertTrue(c.fetchone(), "routes table not created")
