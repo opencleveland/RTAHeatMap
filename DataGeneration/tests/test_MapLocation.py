@@ -1,5 +1,5 @@
 import unittest
-from MapLocation import MapLocation
+from DataGeneration.MapLocation import MapLocation
 
 class TestMapLocation(unittest.TestCase):
 
