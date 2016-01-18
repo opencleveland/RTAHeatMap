@@ -27,25 +27,27 @@ class TestDatabaseHandler(unittest.TestCase):
 
     def test_handler_constructor_creates_Source_table(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
-        handler.db_cursor.execute("select name from sqlite_master where "
-                                  "type='table' and name='Source'")
-        self.assertTrue(handler.db_cursor.fetchone(),
-                        "Source table not created in constructor")
+        c = handler.conn.cursor()
+        c.execute("select name from sqlite_master where "
+                  "type='table' and name='Source'")
+        self.assertTrue(c.fetchone(), "Source table not created in constructor")
 
     def test_handler_constructor_creates_Source_table(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
-        handler.db_cursor.execute("select name from sqlite_master where "
-                                  "type='table' and name='TransitStop'")
-        self.assertTrue(handler.db_cursor.fetchone(),
+        c = handler.conn.cursor()
+        c.execute("select name from sqlite_master where "
+                  "type='table' and name='TransitStop'")
+        self.assertTrue(c.fetchone(),
                         "TransitStop table not created in constructor")
 
     # _create_location_table tests
     def test_handler_create_location_creates_table(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         handler._create_location_table_if_not_exists('test_table')
-        handler.db_cursor.execute("select name from sqlite_master where "
-                                  "type='table' and name='test_table'")
-        self.assertTrue(handler.db_cursor.fetchone(), "test_table not created")
+        c = handler.conn.cursor()
+        c.execute("select name from sqlite_master where "
+                  "type='table' and name='test_table'")
+        self.assertTrue(c.fetchone(), "test_table not created")
 
     # add_rows_from_csv tests
     def test_handler_load_file_into_table_inserts_one_record(self):
@@ -54,7 +56,8 @@ class TestDatabaseHandler(unittest.TestCase):
             f.write('latitude,longitude\n')
             f.write('8,12\n')
         handler.add_rows_from_csv('test_file.csv', 'Source')
-        handler.db_cursor.execute("select * from Source")
-        row = handler.db_cursor.fetchone()
+        c = handler.conn.cursor()
+        c.execute("select * from Source")
+        row = c.fetchone()
         self.assertEqual(8, row[0])
         self.assertEqual(12, row[1])
