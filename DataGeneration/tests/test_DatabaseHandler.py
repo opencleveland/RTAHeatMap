@@ -1,6 +1,7 @@
 import unittest
 from mock import patch, MagicMock, Mock
 from DatabaseHandler import DatabaseHandler
+from DataGeneration.MapLocation import MapLocation
 import os
 
 
@@ -110,17 +111,26 @@ class TestDatabaseHandler(unittest.TestCase):
     def test_add_address_adds_to_address_table(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         handler._add_addresses_table()
-        handler.add_address(latitude=0.56, longitude=9.5)
+        handler.add_address(location=MapLocation(latitude=0.56, longitude=9.5))
         c = handler.conn.cursor()
         c.execute("SELECT latitude, longitude FROM addresses")
         row = c.fetchone()
         self.assertEqual((0.56, 9.5), row)
 
-    def test_add_stops_adds_to_stops_table(self):
+    def test_add_address_errors_if_location_is_not_map_location(self):
+        handler = DatabaseHandler('unit_test_db.sqlite3')
+        self.assertRaises(TypeError, handler.add_address, "15")
+
+    def test_add_stop_adds_to_stops_table(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         handler._add_stops_table()
-        handler.add_stop(latitude=-0.55, longitude=80)
+        map_location = MapLocation(latitude=-0.55, longitude=80)
+        handler.add_stop(location= map_location)
         c = handler.conn.cursor()
         c.execute("SELECT latitude, longitude FROM stops")
         row = c.fetchone()
         self.assertEqual((-.55, 80), row)
+
+    def test_add_stop_errors_if_location_is_not_map_location(self):
+        handler = DatabaseHandler('unit_test_db.sqlite3')
+        self.assertRaises(TypeError, handler.add_stop, 13)

@@ -1,6 +1,6 @@
 import sqlite3 as sql
-import csv
 import pandas as pd
+from DataGeneration.MapLocation import MapLocation
 
 
 class DatabaseHandler:
@@ -52,12 +52,16 @@ class DatabaseHandler:
         df = pd.read_csv(file_name)
         df.to_sql('stops', self.conn, if_exists='append', index=False)
 
-    def add_address(self, latitude, longitude):
+    def add_address(self, location):
+        if not isinstance(location, MapLocation):
+            raise TypeError('location must be of type MapLocation')
         c = self.conn.cursor()
         c.execute("INSERT INTO addresses (latitude, longitude)"
-                  "VALUES (?, ?)", (latitude, longitude))
+                  "VALUES (?, ?)", (location.latitude, location.longitude))
 
-    def add_stop(self, latitude, longitude):
+    def add_stop(self, location):
+        if not isinstance(location, MapLocation):
+            raise TypeError('location must be of type MapLocation')
         c = self.conn.cursor()
         c.execute("INSERT INTO stops (latitude, longitude)"
-                  "VALUES (?, ?)", (latitude, longitude))
+                  "VALUES (?, ?)", (location.latitude, location.longitude))
