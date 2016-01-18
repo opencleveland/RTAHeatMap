@@ -35,3 +35,15 @@ class TestMapLocation(unittest.TestCase):
 
     def test_constructor_errors_for_too_small_longitude(self):
         self.assertRaises(ValueError, MapLocation, 0, -180.001)
+
+    def test_identical_MapLocations_are_equal(self):
+        a = MapLocation(latitude=5, longitude=10)
+        b = MapLocation(latitude=5, longitude=10)
+        self.assertTrue(a==b, "MapLocations with equal latitude and longitudes "
+                              "should be equal")
+
+    def test_different_MapLocations_are_not_equal(self):
+        a = MapLocation(latitude=4, longitude=7)
+        b = MapLocation(latitude=5, longitude=5)
+        self.assertTrue(a!=b, "MapLocations with different latitudes and "
+                              "longitudes should not be equal")

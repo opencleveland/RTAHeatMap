@@ -6,3 +6,7 @@ class MapLocation:
             raise ValueError("longitude must be between -180 and 180")
         self.latitude = latitude
         self.longitude = longitude
+
+    def __eq__(self, other):
+        return self.latitude == other.latitude and \
+               self.longitude == other.longitude
