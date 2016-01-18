@@ -58,19 +58,6 @@ class TestDatabaseHandler(unittest.TestCase):
         self.assertTrue(mock_add_routes.called,
                         "construct_db did not call _add_routes_table")
 
-    # add_rows_from_csv tests
-    def test_handler_load_file_into_table_inserts_one_record(self):
-        handler = DatabaseHandler('unit_test_db.sqlite3')
-        with open('test_file.csv', 'w') as f:
-            f.write('latitude,longitude\n')
-            f.write('8,12\n')
-        handler.add_rows_from_csv('test_file.csv', 'Source')
-        c = handler.conn.cursor()
-        c.execute("select * from Source")
-        row = c.fetchone()
-        self.assertEqual(8, row[0])
-        self.assertEqual(12, row[1])
-
     # table construction tests
     def test_add_addresses_table_adds_table(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
@@ -95,3 +82,27 @@ class TestDatabaseHandler(unittest.TestCase):
         c.execute("SELECT NAME FROM sqlite_master WHERE "
                   "TYPE='table' AND NAME='routes'")
         self.assertTrue(c.fetchone(), "routes table not created")
+
+    def test_handler_add_addresses_from_file_inserts_one_record(self):
+        handler = DatabaseHandler('unit_test_db.sqlite3')
+        with open('test_file.csv', 'w') as f:
+            f.write('latitude,longitude\n')
+            f.write('8,12\n')
+        handler.add_addresses_from_file('test_file.csv')
+        c = handler.conn.cursor()
+        c.execute("select * from addresses")
+        row = c.fetchone()
+        self.assertEqual(8, row[0])
+        self.assertEqual(12, row[1])
+
+    def test_handler_add_stops_from_file_inserts_one_record(self):
+        handler = DatabaseHandler('unit_test_db.sqlite3')
+        with open('test_file.csv', 'w') as f:
+            f.write('latitude,longitude\n')
+            f.write('15.35,-1.5\n')
+        handler.add_stops_from_file('test_file.csv')
+        c = handler.conn.cursor()
+        c.execute("select * from stops")
+        row = c.fetchone()
+        self.assertEqual(15.35, row[0])
+        self.assertEqual(-1.5, row[1])

@@ -16,7 +16,7 @@ class DatabaseHandler:
     def _add_addresses_table(self):
         c = self.conn.cursor()
         c.execute("""
-                  CREATE TABLE IF NOT EXISTS addresses 
+                  CREATE TABLE IF NOT EXISTS addresses
                   (id INTEGER PRIMARY KEY,
                   latitude real NOT NULL,
                   longitude real NOT NULL)
@@ -44,6 +44,10 @@ class DatabaseHandler:
                   FOREIGN KEY(stop_id) REFERENCES stops(id))
                   """)
 
-    def add_rows_from_csv(self, file_name, table_name):
+    def add_addresses_from_file(self, file_name):
         df = pd.read_csv(file_name)
-        df.to_sql(table_name, self.conn, if_exists='append', index=False)
+        df.to_sql('addresses', self.conn, if_exists='append', index=False)
+
+    def add_stops_from_file(self, file_name):
+        df = pd.read_csv(file_name)
+        df.to_sql('stops', self.conn, if_exists='append', index=False)
