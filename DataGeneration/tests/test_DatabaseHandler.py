@@ -83,6 +83,7 @@ class TestDatabaseHandler(unittest.TestCase):
                   "TYPE='table' AND NAME='routes'")
         self.assertTrue(c.fetchone(), "routes table not created")
 
+    # add information to table from file tests
     def test_handler_add_addresses_from_file_inserts_one_record(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         with open('test_file.csv', 'w') as f:
@@ -90,10 +91,9 @@ class TestDatabaseHandler(unittest.TestCase):
             f.write('8,12\n')
         handler.add_addresses_from_file('test_file.csv')
         c = handler.conn.cursor()
-        c.execute("select * from addresses")
+        c.execute("SELECT latitude, longitude FROM addresses")
         row = c.fetchone()
-        self.assertEqual(8, row[0])
-        self.assertEqual(12, row[1])
+        self.assertEqual((8, 12), row)
 
     def test_handler_add_stops_from_file_inserts_one_record(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
@@ -102,7 +102,25 @@ class TestDatabaseHandler(unittest.TestCase):
             f.write('15.35,-1.5\n')
         handler.add_stops_from_file('test_file.csv')
         c = handler.conn.cursor()
-        c.execute("select * from stops")
+        c.execute("SELECT latitude, longitude FROM stops")
         row = c.fetchone()
-        self.assertEqual(15.35, row[0])
-        self.assertEqual(-1.5, row[1])
+        self.assertEqual((15.35, -1.5), row)
+
+    # add information to tables tests
+    def test_add_address_adds_to_address_table(self):
+        handler = DatabaseHandler('unit_test_db.sqlite3')
+        handler._add_addresses_table()
+        handler.add_address(latitude=0.56, longitude=9.5)
+        c = handler.conn.cursor()
+        c.execute("SELECT latitude, longitude FROM addresses")
+        row = c.fetchone()
+        self.assertEqual((0.56, 9.5), row)
+
+    def test_add_stops_adds_to_stops_table(self):
+        handler = DatabaseHandler('unit_test_db.sqlite3')
+        handler._add_stops_table()
+        handler.add_stop(latitude=-0.55, longitude=80)
+        c = handler.conn.cursor()
+        c.execute("SELECT latitude, longitude FROM stops")
+        row = c.fetchone()
+        self.assertEqual((-.55, 80), row)
