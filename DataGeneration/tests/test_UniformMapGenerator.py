@@ -1,6 +1,8 @@
 import unittest
-from RTAHeatMap.DataGeneration.UniformMapGenerator import UniformMapGenerator
+
 import pandas
+
+from RTAHeatMap.DataGeneration.UniformMapGenerator import UniformMapGenerator
 
 
 class TestUniformMapGenerator(unittest.TestCase):

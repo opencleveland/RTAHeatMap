@@ -1,4 +1,3 @@
-from urllib2 import Request, urlopen, URLError
 import requests
 from MapLocation import MapLocation
 import os

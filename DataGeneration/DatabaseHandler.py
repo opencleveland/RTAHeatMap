@@ -19,3 +19,5 @@ class DatabaseHandler:
     def add_rows_from_csv(self, file_name, table_name):
         df = pd.read_csv(file_name)
         df.to_sql(table_name, self.conn, if_exists='append', index=False)
+
+

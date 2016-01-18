@@ -1,6 +1,7 @@
 import unittest
 from DataGeneration.MapLocation import MapLocation
 
+
 class TestMapLocation(unittest.TestCase):
 
     def test_MapLocation_class_exists(self):
