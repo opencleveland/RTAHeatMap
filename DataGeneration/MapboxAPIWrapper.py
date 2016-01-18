@@ -1,5 +1,5 @@
 import requests
-from MapLocation import MapLocation
+from DataGeneration.MapLocation import MapLocation
 import os
 
 

@@ -1,7 +1,7 @@
 import unittest
-from mock import patch, mock_open, mock
-from MapboxAPIWrapper import MapboxAPIWrapper
-from MapLocation import MapLocation
+from mock import patch, mock_open, mock, MagicMock
+from DataGeneration.MapboxAPIWrapper import MapboxAPIWrapper
+from DataGeneration.MapLocation import MapLocation
 
 from sys import version_info
 if version_info.major == 2:
@@ -153,23 +153,21 @@ class TestMapboxAPIWrapper(unittest.TestCase):
         self.assertEqual(response_dict, self.expected_dict)
 
     # get_distance_from_api tests
-    @patch('MapboxAPIWrapper.MapboxAPIWrapper.call_api')
-    @patch('MapboxAPIWrapper.MapboxAPIWrapper.construct_request_string')
-    def test_get_distance_from_api_constructs_request_string(self,
-                                                             mock_construct,
-                                                             mock_call):
-        mock_construct.return_value = 'request_string'
-        mock_call.return_value = []
+    def test_get_distance_from_api_constructs_request_string(self):
+        mock_construct = MagicMock(return_value='request_string')
+        self.wrapper.construct_request_string = mock_construct
+        mock_call = MagicMock(return_value=[])
+        self.wrapper.call_api = mock_call
+
         self.wrapper.get_distance_from_api()
         mock_construct.assert_called_once_with()
 
-    @patch('MapboxAPIWrapper.MapboxAPIWrapper.call_api')
-    @patch('MapboxAPIWrapper.MapboxAPIWrapper.construct_request_string')
-    def test_get_distance_from_api_calls_make_api_call(self,
-                                                       mock_construct,
-                                                       mock_call):
-        mock_construct.return_value = 'request_string'
-        mock_call.return_value = []
+    def test_get_distance_from_api_calls_make_api_call(self):
+        mock_construct = MagicMock(return_value='request_string')
+        self.wrapper.construct_request_string = mock_construct
+        mock_call = MagicMock(return_value=[])
+        self.wrapper.call_api = mock_call
+
         self.wrapper.get_distance_from_api()
         mock_call.assert_called_once_with('request_string')
 
