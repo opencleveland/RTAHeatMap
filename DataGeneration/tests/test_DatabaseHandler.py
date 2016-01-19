@@ -117,7 +117,7 @@ class TestDatabaseHandler(unittest.TestCase):
         row = c.fetchone()
         self.assertEqual((0.56, 9.5), row)
 
-    def test_add_address_errors_if_location_is_not_map_location(self):
+    def test_add_address_errors_if_location_is_doesnt_have_latitude(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         self.assertRaises(TypeError, handler.add_address, "15")
 
@@ -134,3 +134,31 @@ class TestDatabaseHandler(unittest.TestCase):
     def test_add_stop_errors_if_location_is_not_map_location(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         self.assertRaises(TypeError, handler.add_stop, 13)
+
+    # Information Retrieval Tests
+    def test_get_address_without_route_returns_MapLocation(self):
+        handler = DatabaseHandler('unit_test_db.sqlite3')
+        handler.construct_db()
+        handler.add_address(location=MapLocation(latitude=5, longitude=6))
+        self.assertIsInstance(handler.get_address_without_route(), MapLocation)
+
+    def test_get_address_without_route_returns_address_when_routes_empty(self):
+        handler = DatabaseHandler('unit_test_db.sqlite3')
+        handler.construct_db()
+        handler.add_address(location=MapLocation(latitude=5, longitude=6))
+        self.assertEqual(MapLocation(latitude=5, longitude=6),
+                         handler.get_address_without_route(),
+                         "Only MapLocation in addresses was not returned")
+
+    def test_get_address_without_route_returns_address_without_route(self):
+        handler = DatabaseHandler('unit_test_db.sqlite3')
+        handler.construct_db()
+        handler.add_address(location=MapLocation(latitude=1, longitude=2))
+        handler.add_address(location=MapLocation(latitude=3, longitude=4))
+        handler.add_stop(location=MapLocation(latitude=0, longitude=0))
+        c = handler.conn.cursor()
+        c.execute("INSERT INTO routes (address_id, stop_id, distance, time)"
+                  "VALUES (1, 1, 1, 1)")
+        self.assertEqual(MapLocation(latitude=3, longitude=4),
+                         handler.get_address_without_route(),
+                         "the MapLocation without route was not returned")

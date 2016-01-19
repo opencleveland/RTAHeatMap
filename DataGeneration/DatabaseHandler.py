@@ -12,6 +12,7 @@ class DatabaseHandler:
         self._add_addresses_table()
         self._add_stops_table()
         self._add_routes_table()
+        self.conn.commit()
 
     def _add_addresses_table(self):
         c = self.conn.cursor()
@@ -53,15 +54,31 @@ class DatabaseHandler:
         df.to_sql('stops', self.conn, if_exists='append', index=False)
 
     def add_address(self, location):
-        if not isinstance(location, MapLocation):
-            raise TypeError('location must be of type MapLocation')
+        if not hasattr(location, 'latitude'):
+            raise TypeError('location must have latitude property')
+        if not hasattr(location, 'longitude'):
+            raise TypeError('location must have longitude property')
         c = self.conn.cursor()
         c.execute("INSERT INTO addresses (latitude, longitude)"
                   "VALUES (?, ?)", (location.latitude, location.longitude))
+        self.conn.commit()
 
     def add_stop(self, location):
-        if not isinstance(location, MapLocation):
-            raise TypeError('location must be of type MapLocation')
+        if not hasattr(location, 'latitude'):
+            raise TypeError('location must have latitude property')
+        if not hasattr(location, 'longitude'):
+            raise TypeError('location must have longitude property')
         c = self.conn.cursor()
         c.execute("INSERT INTO stops (latitude, longitude)"
                   "VALUES (?, ?)", (location.latitude, location.longitude))
+        self.conn.commit()
+
+    # Information Retrieval
+    def get_address_without_route(self):
+        c = self.conn.cursor()
+        c.execute("SELECT addresses.latitude, addresses.longitude "
+                  "FROM addresses LEFT JOIN routes "
+                  "ON routes.id = addresses.id "
+                  "WHERE routes.id IS NULL")
+        row = c.fetchone()
+        return MapLocation(latitude=row[0], longitude=row[1])
