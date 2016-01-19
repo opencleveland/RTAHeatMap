@@ -10,3 +10,6 @@ class MapLocation:
     def __eq__(self, other):
         return self.latitude == other.latitude and \
                self.longitude == other.longitude
+
+    def __str__(self):
+        return "{}, {}".format(self.latitude, self.longitude)

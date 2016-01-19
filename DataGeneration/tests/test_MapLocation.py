@@ -47,3 +47,7 @@ class TestMapLocation(unittest.TestCase):
         b = MapLocation(latitude=5, longitude=5)
         self.assertTrue(a!=b, "MapLocations with different latitudes and "
                               "longitudes should not be equal")
+
+    def test_str_method_is_correct(self):
+        location = MapLocation(latitude=4, longitude=5)
+        self.assertEqual("4, 5", str(location))
