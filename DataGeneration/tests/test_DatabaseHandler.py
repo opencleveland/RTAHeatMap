@@ -108,6 +108,7 @@ class TestDatabaseHandler(unittest.TestCase):
         self.assertEqual((15.35, -1.5), row)
 
     # add information to tables tests
+    # add_address tests
     def test_add_address_adds_to_address_table(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         handler._add_addresses_table()
@@ -130,6 +131,7 @@ class TestDatabaseHandler(unittest.TestCase):
         c.execute("SELECT * FROM addresses")
         self.assertEqual(100, c.fetchone()[0])
 
+    # add_stop tests
     def test_add_stop_adds_to_stops_table(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         handler._add_stops_table()
@@ -174,10 +176,18 @@ class TestDatabaseHandler(unittest.TestCase):
     def test_get_address_without_route_returns_address_when_routes_empty(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         handler.construct_db()
-        handler.add_address(location=MapLocation(latitude=5, longitude=6))
-        self.assertEqual(MapLocation(latitude=5, longitude=6),
+        handler.add_address(location=MapLocation(latitude=5, longitude=6, id=1))
+        self.assertEqual(MapLocation(latitude=5, longitude=6, id=1),
                          handler.get_address_without_route(),
                          "Only MapLocation in addresses was not returned")
+
+    def test_get_address_without_route_returns_with_correct_id(self):
+        handler = DatabaseHandler('unit_test_db.sqlite3')
+        handler.construct_db()
+        handler.add_address(MapLocation(latitude=2, longitude=2, id=222))
+        self.assertEqual(MapLocation(latitude=2, longitude=2, id=222),
+                         handler.get_address_without_route(),
+                         "MapLocation should return correct id")
 
     def test_get_address_without_route_returns_address_without_route(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
@@ -188,10 +198,11 @@ class TestDatabaseHandler(unittest.TestCase):
         c = handler.conn.cursor()
         c.execute("INSERT INTO routes (address_id, stop_id, distance, time)"
                   "VALUES (1, 1, 1, 1)")
-        self.assertEqual(MapLocation(latitude=3, longitude=4),
+        self.assertEqual(MapLocation(latitude=3, longitude=4, id=2),
                          handler.get_address_without_route(),
                          "the MapLocation without route was not returned")
 
+    # id existence tests
     def test_address_id_in_table_returns_false_if_not_present(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         handler.construct_db()
