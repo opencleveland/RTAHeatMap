@@ -42,6 +42,12 @@ class TestMapLocation(unittest.TestCase):
         self.assertTrue(a==b, "MapLocations with equal latitude and longitudes "
                               "should be equal")
 
+    def test_identical_MapLocations_are_not_unequal(self):
+        a = MapLocation(latitude=5, longitude=10)
+        b = MapLocation(latitude=5, longitude=10)
+        self.assertFalse(a!=b, "MapLocations with equal latitudes and "
+                               "longitudes should not be unequal")
+
     def test_different_MapLocations_are_not_equal(self):
         a = MapLocation(latitude=4, longitude=7)
         b = MapLocation(latitude=5, longitude=5)
@@ -55,3 +61,10 @@ class TestMapLocation(unittest.TestCase):
     def test_MapLocation_accepts_id_in_constructor(self):
         location = MapLocation(latitude=1, longitude=2, id=15)
         self.assertEqual(15, location.id)
+
+    def test_otherwise_identical_MapLocations_with_different_ids_unequal(self):
+        a = MapLocation(latitude=10, longitude=10, id=3)
+        b = MapLocation(latitude=10, longitude=10, id=50)
+        self.assertTrue(a!=b, "MapLocations with equal latitudes and "
+                                "longitudes, but different id's should not be "
+                                "equal")
