@@ -121,6 +121,15 @@ class TestDatabaseHandler(unittest.TestCase):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         self.assertRaises(TypeError, handler.add_address, "15")
 
+    def test_add_address_uses_MapLocation_id_if_nonzero(self):
+        handler = DatabaseHandler('unit_test_db.sqlite3')
+        handler._add_addresses_table()
+        address_location = MapLocation(latitude=0.33, longitude=4, id=100)
+        handler.add_address(address_location)
+        c = handler.conn.cursor()
+        c.execute("SELECT * FROM addresses")
+        self.assertEqual(100, c.fetchone()[0])
+
     def test_add_stop_adds_to_stops_table(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         handler._add_stops_table()
@@ -134,6 +143,15 @@ class TestDatabaseHandler(unittest.TestCase):
     def test_add_stop_errors_if_location_is_not_map_location(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         self.assertRaises(TypeError, handler.add_stop, 13)
+
+    def test_add_stop_uses_MapLocation_id_if_nonzero(self):
+        handler = DatabaseHandler('unit_test_db.sqlite3')
+        handler._add_stops_table()
+        stop_location = MapLocation(latitude=0.48, longitude=179, id=888)
+        handler.add_stop(stop_location)
+        c = handler.conn.cursor()
+        c.execute("SELECT * FROM stops")
+        self.assertEqual(888, c.fetchone()[0])
 
     # add_route tests
     def test_add_route_adds_route(self):

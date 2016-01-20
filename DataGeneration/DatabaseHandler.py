@@ -59,8 +59,13 @@ class DatabaseHandler:
         if not hasattr(location, 'longitude'):
             raise TypeError('location must have longitude property')
         c = self.conn.cursor()
-        c.execute("INSERT INTO addresses (latitude, longitude)"
-                  "VALUES (?, ?)", (location.latitude, location.longitude))
+        if location.id != 0:
+            c.execute("INSERT INTO addresses (id, latitude, longitude) "
+                      "VALUES (?, ?, ?)",
+                      (location.id, location.latitude, location.longitude))
+        else:
+            c.execute("INSERT INTO addresses (latitude, longitude) "
+                      "VALUES (?, ?)", (location.latitude, location.longitude))
         self.conn.commit()
 
     def add_stop(self, location):
@@ -69,8 +74,14 @@ class DatabaseHandler:
         if not hasattr(location, 'longitude'):
             raise TypeError('location must have longitude property')
         c = self.conn.cursor()
-        c.execute("INSERT INTO stops (latitude, longitude)"
-                  "VALUES (?, ?)", (location.latitude, location.longitude))
+        if location.id != 0:
+            c.execute("INSERT INTO stops (id, latitude, longitude) "
+                      "VALUES (?, ?, ?)",
+                      (location.id, location.latitude, location.longitude))
+        else:
+            c.execute("INSERT INTO stops (latitude, longitude) "
+                      "VALUES (?, ?)",
+                      (location.latitude, location.longitude))
         self.conn.commit()
 
     def add_route(self, address, stop, distance, time):
