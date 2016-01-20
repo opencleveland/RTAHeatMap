@@ -125,7 +125,7 @@ class TestDatabaseHandler(unittest.TestCase):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         handler._add_stops_table()
         map_location = MapLocation(latitude=-0.55, longitude=80)
-        handler.add_stop(location= map_location)
+        handler.add_stop(location=map_location)
         c = handler.conn.cursor()
         c.execute("SELECT latitude, longitude FROM stops")
         row = c.fetchone()
@@ -134,6 +134,17 @@ class TestDatabaseHandler(unittest.TestCase):
     def test_add_stop_errors_if_location_is_not_map_location(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         self.assertRaises(TypeError, handler.add_stop, 13)
+
+    # add_route tests
+    def test_add_route_adds_route(self):
+        handler = DatabaseHandler('unit_test_db.sqlite3')
+        handler.construct_db()
+        handler.add_address(location=MapLocation(latitude=5, longitude=5))
+        handler.add_stop(location=MapLocation(latitude=2, longitude=2))
+        handler.add_route(address=1, stop=1, distance=10, time=20)
+        c = handler.conn.cursor()
+        c.execute("SELECT * FROM routes")
+        self.assertEqual((1, 1, 1, 10, 20), c.fetchone())
 
     # Information Retrieval Tests
     def test_get_address_without_route_returns_MapLocation(self):
@@ -162,3 +173,4 @@ class TestDatabaseHandler(unittest.TestCase):
         self.assertEqual(MapLocation(latitude=3, longitude=4),
                          handler.get_address_without_route(),
                          "the MapLocation without route was not returned")
+

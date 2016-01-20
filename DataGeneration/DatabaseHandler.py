@@ -73,6 +73,14 @@ class DatabaseHandler:
                   "VALUES (?, ?)", (location.latitude, location.longitude))
         self.conn.commit()
 
+    def add_route(self, address, stop, distance, time):
+        c = self.conn.cursor()
+        c.execute("INSERT INTO routes "
+                  "(address_id, stop_id, distance, time) "
+                  "VALUES (?, ?, ?, ?)",
+                  (address, stop, distance, time))
+        self.conn.commit()
+
     # Information Retrieval
     def get_address_without_route(self):
         c = self.conn.cursor()
