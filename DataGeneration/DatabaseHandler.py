@@ -90,3 +90,13 @@ class DatabaseHandler:
                   "WHERE routes.id IS NULL")
         row = c.fetchone()
         return MapLocation(latitude=row[0], longitude=row[1])
+
+    def _address_id_in_table(self, id):
+        c = self.conn.cursor()
+        c.execute("SELECT * from addresses WHERE id=?", (id, ))
+        return True if c.fetchone() else False
+
+    def _stop_id_in_table(self, id):
+        c = self.conn.cursor()
+        c.execute("SELECT * FROM stops WHERE id=?", (id, ))
+        return True if c.fetchone() else False

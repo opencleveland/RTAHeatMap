@@ -174,3 +174,30 @@ class TestDatabaseHandler(unittest.TestCase):
                          handler.get_address_without_route(),
                          "the MapLocation without route was not returned")
 
+    def test_address_id_in_table_returns_false_if_not_present(self):
+        handler = DatabaseHandler('unit_test_db.sqlite3')
+        handler.construct_db()
+        c = handler.conn.cursor()
+        c.execute("INSERT INTO addresses VALUES (1, 3, 7)")
+        self.assertEqual(False, handler._address_id_in_table(id=2))
+
+    def test_address_id_in_table_returns_true_if_present(self):
+        handler = DatabaseHandler('unit_test_db.sqlite3')
+        handler.construct_db()
+        c = handler.conn.cursor()
+        c.execute("INSERT INTO addresses VALUES (1, 5, 10)")
+        self.assertEqual(True, handler._address_id_in_table(id=1))
+
+    def test_stop_id_in_table_returns_false_if_not_present(self):
+        handler = DatabaseHandler('unit_test_db.sqlite3')
+        handler.construct_db()
+        c = handler.conn.cursor()
+        c.execute("INSERT INTO stops VALUES (1, 3, 7)")
+        self.assertEqual(False, handler._stop_id_in_table(id=2))
+
+    def test_stop_id_in_table_returns_true_if_present(self):
+        handler = DatabaseHandler('unit_test_db.sqlite3')
+        handler.construct_db()
+        c = handler.conn.cursor()
+        c.execute("INSERT INTO stops VALUES (1, 5, 10)")
+        self.assertEqual(True, handler._stop_id_in_table(id=1))
