@@ -51,3 +51,7 @@ class TestMapLocation(unittest.TestCase):
     def test_str_method_is_correct(self):
         location = MapLocation(latitude=4, longitude=5)
         self.assertEqual("4, 5", str(location))
+
+    def test_MapLocation_accepts_id_in_constructor(self):
+        location = MapLocation(latitude=1, longitude=2, id=15)
+        self.assertEqual(15, location.id)
