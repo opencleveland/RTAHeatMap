@@ -230,3 +230,12 @@ class TestDatabaseHandler(unittest.TestCase):
         c = handler.conn.cursor()
         c.execute("INSERT INTO stops VALUES (1, 5, 10)")
         self.assertEqual(True, handler._stop_id_in_table(id=1))
+
+    def test_get_all_stops_returns_list_of_MapLocations(self):
+        handler = DatabaseHandler('unit_test_db.sqlite3')
+        handler.construct_db()
+        handler.add_stop(MapLocation(latitude=5, longitude=6))
+        handler.add_stop(MapLocation(latitude=3, longitude=-5))
+        stops = handler.get_all_stops()
+        self.assertEqual((5, 6), (stops[0].latitude, stops[0].longitude))
+        self.assertEqual((3, -5), (stops[1].latitude, stops[1].longitude))

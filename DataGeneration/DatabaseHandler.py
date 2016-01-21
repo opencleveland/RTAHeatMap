@@ -103,6 +103,13 @@ class DatabaseHandler:
         row = c.fetchone()
         return MapLocation(latitude=row[0], longitude=row[1], id=row[2])
 
+    def get_all_stops(self):
+        c = self.conn.cursor()
+        c.execute("SELECT * from stops")
+        rows = c.fetchall()
+        return [MapLocation(latitude=row[1], longitude=row[2], id=row[0])
+                for row in rows]
+
     def _address_id_in_table(self, id):
         c = self.conn.cursor()
         c.execute("SELECT * from addresses WHERE id=?", (id, ))
