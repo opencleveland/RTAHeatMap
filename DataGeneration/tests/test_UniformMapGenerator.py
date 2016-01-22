@@ -77,3 +77,19 @@ class TestUniformMapGenerator(unittest.TestCase):
                                                          6, 20,
                                                          1, 1)
         self.assertEqual(len(dataframe), 150, "Output length should be 150")
+
+    def test_get_uniform_map_simple_latitude_is_correct(self):
+        generator = UniformMapGenerator()
+        df = generator.get_uniform_coordinate_map(1, 2, 1, 2, 1, 1)
+        self.assertEqual(1, df.iloc[0, 0])
+        self.assertEqual(1, df.iloc[1, 0])
+        self.assertEqual(2, df.iloc[2, 0])
+        self.assertEqual(2, df.iloc[3, 0])
+
+    def test_get_uniform_map_simple_longitude_is_correct(self):
+        generator = UniformMapGenerator()
+        df = generator.get_uniform_coordinate_map(1, 2, 1, 2, 1, 1)
+        self.assertEqual(1, df.iloc[0, 1])
+        self.assertEqual(2, df.iloc[1, 1])
+        self.assertEqual(1, df.iloc[2, 1])
+        self.assertEqual(2, df.iloc[3, 1])
