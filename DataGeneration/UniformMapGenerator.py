@@ -51,8 +51,8 @@ class UniformMapGenerator:
         return int(math.ceil((maximum - minimum) / resolution + 1))
 
     def instantiate_output_dataframe(self, total_rows):
-        return pd.DataFrame(columns = ['addr_lat','addr_lon'],
-                            index = xrange(0, total_rows))
+        return pd.DataFrame(columns=['latitude','longitude'],
+                            index=xrange(0, total_rows))
 
     # This functions identically to numpy.arange, except it is a generator
     def get_next_coordinate(self, beginning, end, interval):

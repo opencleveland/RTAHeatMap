@@ -41,8 +41,8 @@ class TestUniformMapGenerator(unittest.TestCase):
     def test_empty_out_dataframe_has_correct_column_names(self):
         generator = UniformMapGenerator()
         dataframe = generator.instantiate_output_dataframe(20)
-        self.assertEqual(dataframe.columns[0], 'addr_lat')
-        self.assertEqual(dataframe.columns[1], 'addr_lon')
+        self.assertEqual(dataframe.columns[0], 'latitude')
+        self.assertEqual(dataframe.columns[1], 'longitude')
 
     # get_next_coordinate tests
     def test_get_next_coordinate_first_two(self):
