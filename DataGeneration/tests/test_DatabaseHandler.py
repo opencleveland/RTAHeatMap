@@ -26,16 +26,16 @@ class TestDatabaseHandler(unittest.TestCase):
         handler = DatabaseHandler()
         mock_sql.connect.assert_called_once_with('db.sqlite3')
 
-    # construct_db tests
+    # initialize_db tests
     def test_construct_db_calls_add_address_table(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         mock_add_addresses = Mock()
         handler._add_addresses_table = mock_add_addresses
         mock_add_stops = Mock()
         handler._add_stops_table = mock_add_stops
-        handler.construct_db()
+        handler.initialize_db()
         self.assertTrue(mock_add_addresses.called,
-                        "construct_db did not call _add_addresses_table")
+                        "initialize_db did not call _add_addresses_table")
 
     def test_construct_db_calls_add_stop_table(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
@@ -43,9 +43,9 @@ class TestDatabaseHandler(unittest.TestCase):
         handler._add_addresses_table = mock_add_addresses
         mock_add_stops = Mock()
         handler._add_stops_table = mock_add_stops
-        handler.construct_db()
+        handler.initialize_db()
         self.assertTrue(mock_add_stops.called,
-                        "construct_db did not call _add_stops_table")
+                        "initialize_db did not call _add_stops_table")
 
     def test_construct_db_calls_add_route_table(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
@@ -55,9 +55,9 @@ class TestDatabaseHandler(unittest.TestCase):
         handler._add_stops_table = mock_add_stops
         mock_add_routes = Mock()
         handler._add_routes_table = mock_add_routes
-        handler.construct_db()
+        handler.initialize_db()
         self.assertTrue(mock_add_routes.called,
-                        "construct_db did not call _add_routes_table")
+                        "initialize_db did not call _add_routes_table")
 
     # table construction tests
     def test_add_addresses_table_adds_table(self):
@@ -158,7 +158,7 @@ class TestDatabaseHandler(unittest.TestCase):
     # add_route tests
     def test_add_route_adds_route(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
-        handler.construct_db()
+        handler.initialize_db()
         handler.add_address(location=MapLocation(latitude=5, longitude=5))
         handler.add_stop(location=MapLocation(latitude=2, longitude=2))
         handler.add_route(address=1, stop=1, distance=10, time=20)
@@ -169,13 +169,13 @@ class TestDatabaseHandler(unittest.TestCase):
     # Information Retrieval Tests
     def test_get_address_without_route_returns_MapLocation(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
-        handler.construct_db()
+        handler.initialize_db()
         handler.add_address(location=MapLocation(latitude=5, longitude=6))
         self.assertIsInstance(handler.get_address_without_route(), MapLocation)
 
     def test_get_address_without_route_returns_address_when_routes_empty(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
-        handler.construct_db()
+        handler.initialize_db()
         handler.add_address(location=MapLocation(latitude=5, longitude=6, id=1))
         self.assertEqual(MapLocation(latitude=5, longitude=6, id=1),
                          handler.get_address_without_route(),
@@ -183,7 +183,7 @@ class TestDatabaseHandler(unittest.TestCase):
 
     def test_get_address_without_route_returns_with_correct_id(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
-        handler.construct_db()
+        handler.initialize_db()
         handler.add_address(MapLocation(latitude=2, longitude=2, id=222))
         self.assertEqual(MapLocation(latitude=2, longitude=2, id=222),
                          handler.get_address_without_route(),
@@ -191,7 +191,7 @@ class TestDatabaseHandler(unittest.TestCase):
 
     def test_get_address_without_route_returns_address_without_route(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
-        handler.construct_db()
+        handler.initialize_db()
         handler.add_address(location=MapLocation(latitude=1, longitude=2))
         handler.add_address(location=MapLocation(latitude=3, longitude=4))
         handler.add_stop(location=MapLocation(latitude=0, longitude=0))
@@ -205,35 +205,35 @@ class TestDatabaseHandler(unittest.TestCase):
     # id existence tests
     def test_address_id_in_table_returns_false_if_not_present(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
-        handler.construct_db()
+        handler.initialize_db()
         c = handler.conn.cursor()
         c.execute("INSERT INTO addresses VALUES (1, 3, 7)")
         self.assertEqual(False, handler._address_id_in_table(id=2))
 
     def test_address_id_in_table_returns_true_if_present(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
-        handler.construct_db()
+        handler.initialize_db()
         c = handler.conn.cursor()
         c.execute("INSERT INTO addresses VALUES (1, 5, 10)")
         self.assertEqual(True, handler._address_id_in_table(id=1))
 
     def test_stop_id_in_table_returns_false_if_not_present(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
-        handler.construct_db()
+        handler.initialize_db()
         c = handler.conn.cursor()
         c.execute("INSERT INTO stops VALUES (1, 3, 7)")
         self.assertEqual(False, handler._stop_id_in_table(id=2))
 
     def test_stop_id_in_table_returns_true_if_present(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
-        handler.construct_db()
+        handler.initialize_db()
         c = handler.conn.cursor()
         c.execute("INSERT INTO stops VALUES (1, 5, 10)")
         self.assertEqual(True, handler._stop_id_in_table(id=1))
 
     def test_get_all_stops_returns_list_of_MapLocations(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
-        handler.construct_db()
+        handler.initialize_db()
         handler.add_stop(MapLocation(latitude=5, longitude=6))
         handler.add_stop(MapLocation(latitude=3, longitude=-5))
         stops = handler.get_all_stops()

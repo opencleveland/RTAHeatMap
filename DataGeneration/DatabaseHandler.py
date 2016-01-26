@@ -8,7 +8,7 @@ class DatabaseHandler:
     def __init__(self, db_file_name='db.sqlite3'):
         self.conn = sql.connect(db_file_name)
 
-    def construct_db(self):
+    def initialize_db(self):
         self._add_addresses_table()
         self._add_stops_table()
         self._add_routes_table()
