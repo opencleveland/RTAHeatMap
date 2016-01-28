@@ -7,6 +7,7 @@ class DatabaseHandler:
 
     def __init__(self, db_file_name='db.sqlite3'):
         self.conn = sql.connect(db_file_name)
+        self.initialize_db()
 
     def initialize_db(self):
         self._add_addresses_table()

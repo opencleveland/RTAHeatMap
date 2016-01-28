@@ -14,17 +14,29 @@ class TestDatabaseHandler(unittest.TestCase):
             os.remove('test_file.csv')
 
     # constructor tests
+    @patch('DatabaseHandler.DatabaseHandler.initialize_db')
     @patch('DatabaseHandler.sql')
     def test_handler_constructor_connects(self,
-                                          mock_sql):
+                                          mock_sql,
+                                          mock_init_db):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         mock_sql.connect.assert_called_once_with('unit_test_db.sqlite3')
 
+    @patch('DatabaseHandler.DatabaseHandler.initialize_db')
     @patch('DatabaseHandler.sql')
-    def test_handler_constructor_default_db_file_name_is_correct(self,
-                                                                 mock_sql):
+    def test_handler_constructor_uses_correct_default_db(self,
+                                                         mock_sql,
+                                                         mock_init_db):
         handler = DatabaseHandler()
         mock_sql.connect.assert_called_once_with('db.sqlite3')
+
+    @patch('DatabaseHandler.DatabaseHandler.initialize_db')
+    @patch('DatabaseHandler.sql')
+    def test_handler_constructor_calls_initialize_db(self,
+                                                     mock_sql,
+                                                     mock_init_db):
+        handler = DatabaseHandler('unit_test_db.sqlite3')
+        mock_init_db.assert_called_once_with()
 
     # initialize_db tests
     def test_construct_db_calls_add_address_table(self):
@@ -60,7 +72,9 @@ class TestDatabaseHandler(unittest.TestCase):
                         "initialize_db did not call _add_routes_table")
 
     # table construction tests
-    def test_add_addresses_table_adds_table(self):
+    @patch('DatabaseHandler.DatabaseHandler.initialize_db')
+    def test_add_addresses_table_adds_table(self,
+                                            mock_init_db):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         handler._add_addresses_table()
         c = handler.conn.cursor()
@@ -68,7 +82,9 @@ class TestDatabaseHandler(unittest.TestCase):
                   "TYPE='table' and NAME='addresses'")
         self.assertTrue(c.fetchone(), "addresses table not created")
 
-    def test_add_stops_table_adds_table(self):
+    @patch('DatabaseHandler.DatabaseHandler.initialize_db')
+    def test_add_stops_table_adds_table(self,
+                                        mock_init_db):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         handler._add_stops_table()
         c = handler.conn.cursor()
@@ -76,7 +92,9 @@ class TestDatabaseHandler(unittest.TestCase):
                   "TYPE='table' and NAME='stops'")
         self.assertTrue(c.fetchone(), "stops table not created")
 
-    def test_add_routes_table_adds_table(self):
+    @patch('DatabaseHandler.DatabaseHandler.initialize_db')
+    def test_add_routes_table_adds_table(self,
+                                         mock_init_db):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         handler._add_routes_table()
         c = handler.conn.cursor()
@@ -85,7 +103,13 @@ class TestDatabaseHandler(unittest.TestCase):
         self.assertTrue(c.fetchone(), "routes table not created")
 
     # add information to table from file tests
-    def test_handler_add_addresses_from_file_inserts_one_record(self):
+
+    # Why do the following two tests pass? They shouldn't have the tables.
+    # Does pandas.DataFrame.to_sql() create the table if it doesn't find it?
+
+    @patch('DatabaseHandler.DatabaseHandler.initialize_db')
+    def test_handler_add_addresses_from_file_inserts_one_record(self,
+                                                                mock_init_db):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         with open('test_file.csv', 'w') as f:
             f.write('latitude,longitude\n')
@@ -96,7 +120,9 @@ class TestDatabaseHandler(unittest.TestCase):
         row = c.fetchone()
         self.assertEqual((8, 12), row)
 
-    def test_handler_add_stops_from_file_inserts_one_record(self):
+    @patch('DatabaseHandler.DatabaseHandler.initialize_db')
+    def test_handler_add_stops_from_file_inserts_one_record(self,
+                                                            mock_init_db):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         with open('test_file.csv', 'w') as f:
             f.write('latitude,longitude\n')
@@ -109,7 +135,9 @@ class TestDatabaseHandler(unittest.TestCase):
 
     # add information to tables tests
     # add_address tests
-    def test_add_address_adds_to_address_table(self):
+    @patch('DatabaseHandler.DatabaseHandler.initialize_db')
+    def test_add_address_adds_to_address_table(self,
+                                               mock_init_db):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         handler._add_addresses_table()
         handler.add_address(location=MapLocation(latitude=0.56, longitude=9.5))
@@ -118,11 +146,15 @@ class TestDatabaseHandler(unittest.TestCase):
         row = c.fetchone()
         self.assertEqual((0.56, 9.5), row)
 
-    def test_add_address_errors_if_location_is_doesnt_have_latitude(self):
+    @patch('DatabaseHandler.DatabaseHandler.initialize_db')
+    def test_add_address_errors_if_location_doesnt_have_latitude(self,
+                                                                 mock_init_db):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         self.assertRaises(TypeError, handler.add_address, "15")
 
-    def test_add_address_uses_MapLocation_id_if_nonzero(self):
+    @patch('DatabaseHandler.DatabaseHandler.initialize_db')
+    def test_add_address_uses_MapLocation_id_if_nonzero(self,
+                                                        mock_init_db):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         handler._add_addresses_table()
         address_location = MapLocation(latitude=0.33, longitude=4, id=100)
@@ -132,7 +164,9 @@ class TestDatabaseHandler(unittest.TestCase):
         self.assertEqual(100, c.fetchone()[0])
 
     # add_stop tests
-    def test_add_stop_adds_to_stops_table(self):
+    @patch('DatabaseHandler.DatabaseHandler.initialize_db')
+    def test_add_stop_adds_to_stops_table(self,
+                                          mock_init_db):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         handler._add_stops_table()
         map_location = MapLocation(latitude=-0.55, longitude=80)
@@ -142,11 +176,15 @@ class TestDatabaseHandler(unittest.TestCase):
         row = c.fetchone()
         self.assertEqual((-.55, 80), row)
 
-    def test_add_stop_errors_if_location_is_not_map_location(self):
+    @patch('DatabaseHandler.DatabaseHandler.initialize_db')
+    def test_add_stop_errors_if_location_is_not_map_location(self,
+                                                             mock_init_db):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         self.assertRaises(TypeError, handler.add_stop, 13)
 
-    def test_add_stop_uses_MapLocation_id_if_nonzero(self):
+    @patch('DatabaseHandler.DatabaseHandler.initialize_db')
+    def test_add_stop_uses_MapLocation_id_if_nonzero(self,
+                                                     mock_init_db):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         handler._add_stops_table()
         stop_location = MapLocation(latitude=0.48, longitude=179, id=888)
@@ -158,7 +196,6 @@ class TestDatabaseHandler(unittest.TestCase):
     # add_route tests
     def test_add_route_adds_route(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
-        handler.initialize_db()
         handler.add_address(location=MapLocation(latitude=5, longitude=5))
         handler.add_stop(location=MapLocation(latitude=2, longitude=2))
         handler.add_route(address=1, stop=1, distance=10, time=20)
@@ -169,13 +206,11 @@ class TestDatabaseHandler(unittest.TestCase):
     # Information Retrieval Tests
     def test_get_address_without_route_returns_MapLocation(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
-        handler.initialize_db()
         handler.add_address(location=MapLocation(latitude=5, longitude=6))
         self.assertIsInstance(handler.get_address_without_route(), MapLocation)
 
     def test_get_address_without_route_returns_address_when_routes_empty(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
-        handler.initialize_db()
         handler.add_address(location=MapLocation(latitude=5, longitude=6, id=1))
         self.assertEqual(MapLocation(latitude=5, longitude=6, id=1),
                          handler.get_address_without_route(),
@@ -183,7 +218,6 @@ class TestDatabaseHandler(unittest.TestCase):
 
     def test_get_address_without_route_returns_with_correct_id(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
-        handler.initialize_db()
         handler.add_address(MapLocation(latitude=2, longitude=2, id=222))
         self.assertEqual(MapLocation(latitude=2, longitude=2, id=222),
                          handler.get_address_without_route(),
@@ -191,7 +225,6 @@ class TestDatabaseHandler(unittest.TestCase):
 
     def test_get_address_without_route_returns_address_without_route(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
-        handler.initialize_db()
         handler.add_address(location=MapLocation(latitude=1, longitude=2))
         handler.add_address(location=MapLocation(latitude=3, longitude=4))
         handler.add_stop(location=MapLocation(latitude=0, longitude=0))
@@ -203,37 +236,47 @@ class TestDatabaseHandler(unittest.TestCase):
                          "the MapLocation without route was not returned")
 
     # id existence tests
-    def test_address_id_in_table_returns_false_if_not_present(self):
+    @patch('DatabaseHandler.DatabaseHandler.initialize_db')
+    def test_address_id_in_table_returns_false_if_not_present(self,
+                                                              mock_init_db):
         handler = DatabaseHandler('unit_test_db.sqlite3')
-        handler.initialize_db()
+        handler._add_addresses_table()
         c = handler.conn.cursor()
         c.execute("INSERT INTO addresses VALUES (1, 3, 7)")
         self.assertEqual(False, handler._address_id_in_table(id=2))
 
-    def test_address_id_in_table_returns_true_if_present(self):
+    @patch('DatabaseHandler.DatabaseHandler.initialize_db')
+    def test_address_id_in_table_returns_true_if_present(self,
+                                                         mock_init_db):
         handler = DatabaseHandler('unit_test_db.sqlite3')
-        handler.initialize_db()
+        handler._add_addresses_table()
         c = handler.conn.cursor()
         c.execute("INSERT INTO addresses VALUES (1, 5, 10)")
         self.assertEqual(True, handler._address_id_in_table(id=1))
 
-    def test_stop_id_in_table_returns_false_if_not_present(self):
+    @patch('DatabaseHandler.DatabaseHandler.initialize_db')
+    def test_stop_id_in_table_returns_false_if_not_present(self,
+                                                           mock_init_db):
         handler = DatabaseHandler('unit_test_db.sqlite3')
-        handler.initialize_db()
+        handler._add_stops_table()
         c = handler.conn.cursor()
         c.execute("INSERT INTO stops VALUES (1, 3, 7)")
         self.assertEqual(False, handler._stop_id_in_table(id=2))
 
-    def test_stop_id_in_table_returns_true_if_present(self):
+    @patch('DatabaseHandler.DatabaseHandler.initialize_db')
+    def test_stop_id_in_table_returns_true_if_present(self,
+                                                      mock_init_db):
         handler = DatabaseHandler('unit_test_db.sqlite3')
-        handler.initialize_db()
+        handler._add_stops_table()
         c = handler.conn.cursor()
         c.execute("INSERT INTO stops VALUES (1, 5, 10)")
         self.assertEqual(True, handler._stop_id_in_table(id=1))
 
-    def test_get_all_stops_returns_list_of_MapLocations(self):
+    @patch('DatabaseHandler.DatabaseHandler.initialize_db')
+    def test_get_all_stops_returns_list_of_MapLocations(self,
+                                                        mock_init_db):
         handler = DatabaseHandler('unit_test_db.sqlite3')
-        handler.initialize_db()
+        handler._add_stops_table()
         handler.add_stop(MapLocation(latitude=5, longitude=6))
         handler.add_stop(MapLocation(latitude=3, longitude=-5))
         stops = handler.get_all_stops()
