@@ -38,6 +38,24 @@ class TestDatabaseHandler(unittest.TestCase):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         mock_init_db.assert_called_once_with()
 
+    @patch('DatabaseHandler.DatabaseHandler.initialize_db')
+    @patch('DatabaseHandler.sql')
+    def test_handler_constructor_doesnt_connect_if_full_is_false(self,
+                                                                 mock_sql,
+                                                                 mock_init_db):
+        handler = DatabaseHandler('unit_test_db.sqlite3', full=False)
+        self.assertFalse(mock_sql.connect.called,
+                         "Connect shouldn't have been called")
+
+    @patch('DatabaseHandler.DatabaseHandler.initialize_db')
+    @patch('DatabaseHandler.sql')
+    def test_handler_constructor_doesnt_init_db_if_full_is_false(self,
+                                                                 mock_sql,
+                                                                 mock_init_db):
+        handler = DatabaseHandler('unit_test_db.sqlite3', full=False)
+        self.assertFalse(mock_init_db.called,
+                         "initialize_db shouldn't have been called")
+
     # initialize_db tests
     def test_construct_db_calls_add_address_table(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
