@@ -1,8 +1,8 @@
 *.pyc
-*.csv
 *.dbf
 *.zip
 *.sqlite3
 .idea/
 api_keys.txt
 temp
+*.csv
