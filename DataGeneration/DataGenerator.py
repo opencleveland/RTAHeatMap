@@ -8,7 +8,7 @@ class DataGenerator:
     def __init__(self):
         self.stops = []
 
-    def start(self):
+    def initialize(self):
         handler = self.get_database_handler()
         self.stops = handler.get_all_stops()
 
