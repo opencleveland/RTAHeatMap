@@ -4,12 +4,17 @@ from DataGeneration import MapLocation
 import unittest
 from mock import Mock, patch
 
+
 class test_DataGenerator(unittest.TestCase):
 
     # __init__ tests
     def test_constructor_sets_stops_array_to_empty_list(self):
         generator = DataGenerator()
         self.assertEqual([], generator.stops)
+
+    def test_constructor_sets_handler_to_simple_handler(self):
+        generator = DataGenerator()
+        self.assertIsInstance(generator.handler, DatabaseHandler)
 
     # initialize tests
     @patch('DataGeneration.DataGenerator.get_database_handler')
@@ -42,3 +47,11 @@ class test_DataGenerator(unittest.TestCase):
     def test_get_database_handler_returns_DatabaseHandler(self):
         generator = DataGenerator()
         self.assertIsInstance(generator.get_database_handler(), DatabaseHandler)
+
+    # begin tests
+    @patch('DataGeneration.DatabaseHandler.get_address_without_route')
+    def test_begin_calls_handler_get_next_address(self,
+                                                  mock_get_address):
+        generator = DataGenerator()
+        generator.begin()
+        mock_get_address.assert_called_once_with()
