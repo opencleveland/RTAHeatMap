@@ -38,7 +38,7 @@ class test_DataGenerator(unittest.TestCase):
         generator = DataGenerator()
         mock_get_db.return_value = DatabaseHandler(full=False)
         generator.initialize()
-        mock_get_db.assert_called_once_with()
+        mock_get_db.assert_called_once_with('db.sqlite3')
 
     @patch('DataGeneration.DataGenerator.get_api_wrapper')
     @patch('DataGeneration.DatabaseHandler.get_all_stops')
@@ -62,7 +62,7 @@ class test_DataGenerator(unittest.TestCase):
         generator = DataGenerator()
         mock_get_db.return_value = DatabaseHandler(full=False)
         generator.initialize()
-        mock_get_api_wrapper.assert_called_once_with()
+        mock_get_api_wrapper.assert_called_once_with('api_key.txt')
 
     # get_database_handler tests
     def test_get_database_handler_returns_DatabaseHandler(self):

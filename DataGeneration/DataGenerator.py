@@ -10,10 +10,10 @@ class DataGenerator:
         self.handler = DatabaseHandler(full=False)
         self.wrapper = MapboxAPIWrapper()
 
-    def initialize(self):
-        self.handler = self.get_database_handler()
+    def initialize(self, db='db.sqlite3', api_key='api_key.txt'):
+        self.handler = self.get_database_handler(db)
         self.stops = self.handler.get_all_stops()
-        self.wrapper = self.get_api_wrapper()
+        self.wrapper = self.get_api_wrapper(api_key)
 
     def begin(self):
         address = self.handler.get_address_without_route()
