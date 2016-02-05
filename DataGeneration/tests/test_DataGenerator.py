@@ -50,9 +50,18 @@ class test_DataGenerator(unittest.TestCase):
         self.assertIsInstance(generator.get_database_handler(), DatabaseHandler)
 
     # get_api_wrapper tests
-    def test_get_api_wrapper_returns_MapboxAPIWrapper(self):
+    @patch('DataGeneration.MapboxAPIWrapper.load_api_key_from_file')
+    def test_get_api_wrapper_returns_MapboxAPIWrapper(self,
+                                                      mock_get_key):
         generator = DataGenerator()
         self.assertIsInstance(generator.get_api_wrapper(), MapboxAPIWrapper)
+
+    @patch('DataGeneration.MapboxAPIWrapper.load_api_key_from_file')
+    def test_get_api_wrapper_pulls_api_key(self,
+                                           mock_get_key):
+        generator = DataGenerator()
+        generator.get_api_wrapper()
+        mock_get_key.assert_called_once_with('api_key.txt')
 
     # begin tests
     @patch('DataGeneration.DatabaseHandler.get_address_without_route')
