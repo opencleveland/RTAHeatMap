@@ -8,6 +8,7 @@ class DataGenerator:
     def __init__(self):
         self.stops = []
         self.handler = DatabaseHandler(full=False)
+        self.wrapper = MapboxAPIWrapper()
 
     def initialize(self):
         self.handler = self.get_database_handler()

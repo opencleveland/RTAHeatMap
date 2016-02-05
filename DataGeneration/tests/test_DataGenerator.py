@@ -17,6 +17,10 @@ class test_DataGenerator(unittest.TestCase):
         generator = DataGenerator()
         self.assertIsInstance(generator.handler, DatabaseHandler)
 
+    def test_constructor_sets_wrapper_instance_variable(self):
+        generator = DataGenerator()
+        self.assertIsInstance(generator.wrapper, MapboxAPIWrapper)
+
     # initialize tests
     @patch('DataGeneration.DataGenerator.get_database_handler')
     def test_DataGenerator_exists(self,
