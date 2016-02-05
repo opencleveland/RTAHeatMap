@@ -13,6 +13,7 @@ class DataGenerator:
     def initialize(self):
         self.handler = self.get_database_handler()
         self.stops = self.handler.get_all_stops()
+        self.wrapper = self.get_api_wrapper()
 
     def begin(self):
         address = self.handler.get_address_without_route()
