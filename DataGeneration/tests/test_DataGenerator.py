@@ -1,6 +1,7 @@
 from DataGeneration import DataGenerator
 from DataGeneration import DatabaseHandler
 from DataGeneration import MapLocation
+from DataGeneration import MapboxAPIWrapper
 import unittest
 from mock import Mock, patch
 
@@ -47,6 +48,11 @@ class test_DataGenerator(unittest.TestCase):
     def test_get_database_handler_returns_DatabaseHandler(self):
         generator = DataGenerator()
         self.assertIsInstance(generator.get_database_handler(), DatabaseHandler)
+
+    # get_api_wrapper tests
+    def test_get_api_wrapper_returns_MapboxAPIWrapper(self):
+        generator = DataGenerator()
+        self.assertIsInstance(generator.get_api_wrapper(), MapboxAPIWrapper)
 
     # begin tests
     @patch('DataGeneration.DatabaseHandler.get_address_without_route')

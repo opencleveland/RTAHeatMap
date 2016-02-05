@@ -19,3 +19,7 @@ class DataGenerator:
     def get_database_handler(self, db_file_name='db.sqlite3'):
         handler = DatabaseHandler(db_file_name)
         return handler
+
+    def get_api_wrapper(self):
+        wrapper = MapboxAPIWrapper()
+        return wrapper
