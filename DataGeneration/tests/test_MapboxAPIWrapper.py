@@ -1,13 +1,20 @@
 import unittest
 from mock import patch, mock_open, mock, MagicMock
+import requests
 from DataGeneration.MapboxAPIWrapper import MapboxAPIWrapper
 from DataGeneration.MapLocation import MapLocation
+
 
 from sys import version_info
 if version_info.major == 2:
     import __builtin__ as builtins
 else:
     import builtins
+
+
+class CustomHTTPException(Exception):
+    pass
+
 
 class TestMapboxAPIWrapper(unittest.TestCase):
 
@@ -136,7 +143,7 @@ class TestMapboxAPIWrapper(unittest.TestCase):
 
     # make_api_call tests
     @patch('MapboxAPIWrapper.requests.get')
-    def test_make_api_call_calls_urlopen(self, mock_get):
+    def test_call_api_calls_requests_get(self, mock_get):
         mock_response = mock.Mock()
 
         mock_response.json.return_value = self.expected_dict
@@ -151,6 +158,32 @@ class TestMapboxAPIWrapper(unittest.TestCase):
         mock_get.assert_called_once_with(url=url)
         mock_response.json.assert_called_once_with()
         self.assertEqual(response_dict, self.expected_dict)
+
+    @patch('DataGeneration.MapboxAPIWrapper._handle_http_error')
+    @patch('MapboxAPIWrapper.requests.get')
+    def test_call_api_handles_http_error(self,
+                                         mock_get, mock_http_error_handler):
+        mock_response = mock.Mock()
+        http_error = requests.exceptions.HTTPError()
+        mock_response.raise_for_status.side_effect = http_error
+
+        mock_get.return_value = mock_response
+
+        mock_http_error_handler.side_effect = CustomHTTPException()
+
+        url = 'https://api.mapbox.com/v4/directions/mapbox.walking/' \
+              '50.032,40.54453;51.0345,41.2314.json?alternatives=' \
+              'false&instructions=text&geometry=false&steps=false&&' \
+              'access_token=api_key'
+        with self.assertRaises(CustomHTTPException):
+            self.wrapper.call_api(request_url=url)
+
+        mock_get.assert_called_once_with(url=url)
+        self.assertEqual(1, mock_response.raise_for_status.call_count)
+
+        self.assertEqual(0, mock_response.json.call_count)
+
+        mock_http_error_handler.assert_called_once_with(http_error)
 
     # get_distance_from_api tests
     def test_get_distance_from_api_constructs_request_string(self):
