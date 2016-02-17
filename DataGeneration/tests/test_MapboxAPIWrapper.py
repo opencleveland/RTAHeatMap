@@ -213,6 +213,32 @@ class TestMapboxAPIWrapper(unittest.TestCase):
         # Make sure that the connection error handler is called
         mock_conn_error_handler.assert_called_once_with(conn_error)
 
+    @mock.patch('MapboxAPIWrapper.requests.get')
+    def test_get_connection_error_then_success(self, mock_get):
+
+        # construct a response object for a successful call
+        mock_response = mock.Mock()
+        mock_response.json.return_value = self.expected_dict
+
+        # Make an instance of ConnectionError for the failure case
+        conn_error = requests.exceptions.ConnectionError()
+
+        # Give the patched get a list of side effects
+        mock_get.side_effect = [conn_error, conn_error, mock_response]
+
+        url = 'https://api.mapbox.com/v4/directions/mapbox.walking/' \
+              '50.032,40.54453;51.0345,41.2314.json?alternatives=' \
+              'false&instructions=text&geometry=false&steps=false&&' \
+              'access_token=api_key'
+        response_dict = self.wrapper.call_api(request_url=url)
+
+        # Check that the function made the expected internal calls
+        expected_calls = [mock.call(url=url)] * 3
+        self.assertEqual(expected_calls, mock_get.call_args_list)
+        self.assertEqual(1, mock_response.json.call_count)
+
+        # Check the result
+        self.assertEqual(response_dict, self.expected_dict)
 
     # get_distance_from_api tests
     def test_get_distance_from_api_constructs_request_string(self):
