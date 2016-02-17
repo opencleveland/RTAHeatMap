@@ -15,6 +15,9 @@ else:
 class CustomHTTPException(Exception):
     pass
 
+class CustomConnException(Exception):
+    pass
+
 
 class TestMapboxAPIWrapper(unittest.TestCase):
 
@@ -184,6 +187,32 @@ class TestMapboxAPIWrapper(unittest.TestCase):
         self.assertEqual(0, mock_response.json.call_count)
 
         mock_http_error_handler.assert_called_once_with(http_error)
+
+    @mock.patch('DataGeneration.MapboxAPIWrapper._handle_connection_error')
+    @mock.patch('MapboxAPIWrapper.requests.get')
+    def test_call_api_connection_error(self, mock_get, mock_conn_error_handler):
+
+        # Make the patched `requests.get` raise a connection error
+        conn_error = requests.exceptions.ConnectionError()
+        mock_get.side_effect = conn_error
+
+        # Make the patched error handler raise a custom exception
+        mock_conn_error_handler.side_effect = CustomConnException()
+
+        url = 'https://api.mapbox.com/v4/directions/mapbox.walking/' \
+              '50.032,40.54453;51.0345,41.2314.json?alternatives=' \
+              'false&instructions=text&geometry=false&steps=false&&' \
+              'access_token=api_key'
+        with self.assertRaises(CustomConnException):
+            self.wrapper.call_api(request_url=url)
+
+        # Check that the function tried and failed to make 3 calls
+        expected_calls = [mock.call(url=url)] * 3
+        self.assertEqual(expected_calls, mock_get.call_args_list)
+
+        # Make sure that the connection error handler is called
+        mock_conn_error_handler.assert_called_once_with(conn_error)
+
 
     # get_distance_from_api tests
     def test_get_distance_from_api_constructs_request_string(self):

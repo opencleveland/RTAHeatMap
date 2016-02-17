@@ -40,13 +40,20 @@ class MapboxAPIWrapper:
         request_string += self.key
         return request_string
 
-    def call_api(self, request_url):
-        response = requests.get(url=request_url)
-        try:
-            response.raise_for_status()
-            return response.json()
-        except requests.exceptions.HTTPError as e:
-            self._handle_http_error(e)
+    def call_api(self, request_url, retries=3):
+        while retries > 0:
+            try:
+                response = requests.get(url=request_url)
+                try:
+                    response.raise_for_status()
+                    return response.json()
+                except requests.exceptions.HTTPError as e:
+                    self._handle_http_error(e)
+            except (requests.exceptions.ConnectionError,
+                    requests.exceptions.Timeout) as e:
+                retries -= 1
+                if not retries:
+                    self._handle_connection_error(e)
 
     def get_distance_from_api(self):
         request_string = self.construct_request_string()
@@ -58,4 +65,7 @@ class MapboxAPIWrapper:
         return walking_distance, walking_duration
 
     def _handle_http_error(self, e):
+        pass
+
+    def _handle_connection_error(self, e):
         pass
