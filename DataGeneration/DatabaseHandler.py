@@ -24,6 +24,7 @@ class DatabaseHandler:
                   latitude real NOT NULL,
                   longitude real NOT NULL)
                   """)
+        c.close()
 
     def _add_stops_table(self):
         c = self.conn.cursor()
@@ -33,6 +34,7 @@ class DatabaseHandler:
                   latitude real NOT NULL,
                   longitude real NOT NULL)
                   """)
+        c.close()
 
     def _add_routes_table(self):
         c = self.conn.cursor()
@@ -46,6 +48,7 @@ class DatabaseHandler:
                   FOREIGN KEY(address_id) REFERENCES addresses(id),
                   FOREIGN KEY(stop_id) REFERENCES stops(id))
                   """)
+        c.close()
 
     def add_addresses_from_file(self, file_name):
         df = pd.read_csv(file_name)
@@ -69,6 +72,7 @@ class DatabaseHandler:
             c.execute("INSERT INTO addresses (latitude, longitude) "
                       "VALUES (?, ?)", (location.latitude, location.longitude))
         self.conn.commit()
+        c.close()
 
     def add_stop(self, location):
         if not hasattr(location, 'latitude'):
@@ -85,6 +89,7 @@ class DatabaseHandler:
                       "VALUES (?, ?)",
                       (location.latitude, location.longitude))
         self.conn.commit()
+        c.close()
 
     def add_route(self, address, stop, distance, time):
         c = self.conn.cursor()
@@ -93,6 +98,7 @@ class DatabaseHandler:
                   "VALUES (?, ?, ?, ?)",
                   (address, stop, distance, time))
         self.conn.commit()
+        c.close()
 
     # Information Retrieval
     def get_address_without_route(self):
@@ -103,12 +109,14 @@ class DatabaseHandler:
                   "ON routes.id = addresses.id "
                   "WHERE routes.id IS NULL")
         row = c.fetchone()
+        c.close()
         return MapLocation(latitude=row[0], longitude=row[1], id=row[2])
 
     def get_all_stops(self):
         c = self.conn.cursor()
         c.execute("SELECT * from stops")
         rows = c.fetchall()
+        c.close()
         return [MapLocation(latitude=row[1], longitude=row[2], id=row[0])
                 for row in rows]
 
