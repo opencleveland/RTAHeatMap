@@ -3,6 +3,7 @@ from mock import patch, MagicMock, Mock
 from DatabaseHandler import DatabaseHandler
 from DataGeneration.MapLocation import MapLocation
 import os
+import types
 
 
 class TestDatabaseHandler(unittest.TestCase):
@@ -258,7 +259,12 @@ class TestDatabaseHandler(unittest.TestCase):
                          "the MapLocation without route was not returned")
 
     # get_address_without_route_generator tests
-    def test_get_address_without_route_new_address_second_time(self):
+    def test_get_address_without_route_generator_returns_generator(self):
+        handler = DatabaseHandler('unit_test_db.sqlite3')
+        self.assertIsInstance(handler.get_address_without_route_generator(),
+                              types.GeneratorType)
+
+    def test_get_address_without_route_generator_new_address_second_time(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         handler.add_address(location=MapLocation(latitude=1, longitude=1))
         handler.add_address(location=MapLocation(latitude=2, longitude=2))
