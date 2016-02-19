@@ -7,6 +7,10 @@ import os
 
 class TestDatabaseHandler(unittest.TestCase):
 
+    def setUp(self):
+        if os.path.exists('unit_test_db.sqlite3'):
+            os.remove('unit_test_db.sqlite3')
+
     def tearDown(self):
         if os.path.exists('unit_test_db.sqlite3'):
             os.remove('unit_test_db.sqlite3')
