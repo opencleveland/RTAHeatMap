@@ -112,6 +112,17 @@ class DatabaseHandler:
         c.close()
         return MapLocation(latitude=row[0], longitude=row[1], id=row[2])
 
+    def get_address_without_route_generator(self):
+        c = self.conn.cursor()
+        c.execute("SELECT "
+                  "addresses.latitude, addresses.longitude, addresses.id "
+                  "FROM addresses LEFT JOIN routes "
+                  "ON routes.id = addresses.id "
+                  "WHERE routes.id IS NULL")
+        while True:
+            row = c.fetchone()
+            yield MapLocation(latitude=row[0], longitude=row[1], id=row[2])
+
     def get_all_stops(self):
         c = self.conn.cursor()
         c.execute("SELECT * from stops")

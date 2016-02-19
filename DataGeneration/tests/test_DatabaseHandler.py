@@ -257,15 +257,17 @@ class TestDatabaseHandler(unittest.TestCase):
                          handler.get_address_without_route(),
                          "the MapLocation without route was not returned")
 
+    # get_address_without_route_generator tests
     def test_get_address_without_route_new_address_second_time(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         handler.add_address(location=MapLocation(latitude=1, longitude=1))
         handler.add_address(location=MapLocation(latitude=2, longitude=2))
+        address_generator = handler.get_address_without_route_generator()
         self.assertEqual(MapLocation(latitude=1, longitude=1, id=1),
-                         handler.get_address_without_route(),
+                         address_generator.next(),
                          "first returned MapLocation was not correct")
         self.assertEqual(MapLocation(latitude=2, longitude=2, id=2),
-                         handler.get_address_without_route(),
+                         address_generator.next(),
                          "second returned MapLocation was not correct")
 
     # id existence tests
