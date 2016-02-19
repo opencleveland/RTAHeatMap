@@ -227,32 +227,6 @@ class TestDatabaseHandler(unittest.TestCase):
         self.assertEqual((1, 1, 1, 10, 20), c.fetchone())
 
     # Information Retrieval Tests
-    def test_get_address_without_route_returns_address_when_routes_empty(self):
-        handler = DatabaseHandler('unit_test_db.sqlite3')
-        handler.add_address(location=MapLocation(latitude=5, longitude=6, id=1))
-        self.assertEqual(MapLocation(latitude=5, longitude=6, id=1),
-                         handler.get_address_without_route(),
-                         "Only MapLocation in addresses was not returned")
-
-    def test_get_address_without_route_returns_with_correct_id(self):
-        handler = DatabaseHandler('unit_test_db.sqlite3')
-        handler.add_address(MapLocation(latitude=2, longitude=2, id=222))
-        self.assertEqual(MapLocation(latitude=2, longitude=2, id=222),
-                         handler.get_address_without_route(),
-                         "MapLocation should return correct id")
-
-    def test_get_address_without_route_returns_address_without_route(self):
-        handler = DatabaseHandler('unit_test_db.sqlite3')
-        handler.add_address(location=MapLocation(latitude=1, longitude=2))
-        handler.add_address(location=MapLocation(latitude=3, longitude=4))
-        handler.add_stop(location=MapLocation(latitude=0, longitude=0))
-        c = handler.conn.cursor()
-        c.execute("INSERT INTO routes (address_id, stop_id, distance, time)"
-                  "VALUES (1, 1, 1, 1)")
-        self.assertEqual(MapLocation(latitude=3, longitude=4, id=2),
-                         handler.get_address_without_route(),
-                         "the MapLocation without route was not returned")
-
     # get_address_without_route_generator tests
     def test_get_address_without_route_generator_returns_generator(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
@@ -264,6 +238,36 @@ class TestDatabaseHandler(unittest.TestCase):
         handler.add_address(location=MapLocation(latitude=1, longitude=1))
         address_generator = handler.get_address_without_route_generator()
         self.assertIsInstance(address_generator.next(), MapLocation)
+
+    def test_get_address_without_route_returns_address_when_routes_empty(self):
+        handler = DatabaseHandler('unit_test_db.sqlite3')
+        handler.add_address(location=MapLocation(latitude=5, longitude=6, id=1))
+        address_generator = handler.get_address_without_route_generator()
+        self.assertEqual(MapLocation(latitude=5, longitude=6, id=1),
+                         address_generator.next(),
+                         "Only MapLocation in addresses was not returned")
+
+    def test_get_address_without_route_returns_with_correct_id(self):
+        handler = DatabaseHandler('unit_test_db.sqlite3')
+        handler.add_address(MapLocation(latitude=2, longitude=2, id=222))
+        address_generator = handler.get_address_without_route_generator()
+        self.assertEqual(MapLocation(latitude=2, longitude=2, id=222),
+                         address_generator.next(),
+                         "MapLocation should return correct id")
+
+    def test_get_address_without_route_returns_address_without_route(self):
+        handler = DatabaseHandler('unit_test_db.sqlite3')
+        handler.add_address(location=MapLocation(latitude=1, longitude=2))
+        handler.add_address(location=MapLocation(latitude=3, longitude=4))
+        handler.add_stop(location=MapLocation(latitude=0, longitude=0))
+        c = handler.conn.cursor()
+        c.execute("INSERT INTO routes (address_id, stop_id, distance, time)"
+                  "VALUES (1, 1, 1, 1)")
+        c.close()
+        address_generator = handler.get_address_without_route_generator()
+        self.assertEqual(MapLocation(latitude=3, longitude=4, id=2),
+                         address_generator.next(),
+                         "the MapLocation without route was not returned")
 
     def test_get_address_without_route_generator_new_address_second_time(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
