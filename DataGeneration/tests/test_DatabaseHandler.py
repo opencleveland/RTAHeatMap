@@ -227,11 +227,6 @@ class TestDatabaseHandler(unittest.TestCase):
         self.assertEqual((1, 1, 1, 10, 20), c.fetchone())
 
     # Information Retrieval Tests
-    def test_get_address_without_route_returns_MapLocation(self):
-        handler = DatabaseHandler('unit_test_db.sqlite3')
-        handler.add_address(location=MapLocation(latitude=5, longitude=6))
-        self.assertIsInstance(handler.get_address_without_route(), MapLocation)
-
     def test_get_address_without_route_returns_address_when_routes_empty(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         handler.add_address(location=MapLocation(latitude=5, longitude=6, id=1))
@@ -263,6 +258,12 @@ class TestDatabaseHandler(unittest.TestCase):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         self.assertIsInstance(handler.get_address_without_route_generator(),
                               types.GeneratorType)
+
+    def test_get_address_without_route_generator_yield_MapLocations(self):
+        handler = DatabaseHandler('unit_test_db.sqlite3')
+        handler.add_address(location=MapLocation(latitude=1, longitude=1))
+        address_generator = handler.get_address_without_route_generator()
+        self.assertIsInstance(address_generator.next(), MapLocation)
 
     def test_get_address_without_route_generator_new_address_second_time(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
