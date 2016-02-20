@@ -101,17 +101,6 @@ class DatabaseHandler:
         c.close()
 
     # Information Retrieval
-    def get_address_without_route(self):
-        c = self.conn.cursor()
-        c.execute("SELECT "
-                  "addresses.latitude, addresses.longitude, addresses.id "
-                  "FROM addresses LEFT JOIN routes "
-                  "ON routes.id = addresses.id "
-                  "WHERE routes.id IS NULL")
-        row = c.fetchone()
-        c.close()
-        return MapLocation(latitude=row[0], longitude=row[1], id=row[2])
-
     def get_address_without_route_generator(self):
         c = self.conn.cursor()
         c.execute("SELECT "
