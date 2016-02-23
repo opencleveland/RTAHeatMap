@@ -3,7 +3,7 @@ from DataGeneration import DatabaseHandler
 from DataGeneration import MapLocation
 from DataGeneration import MapboxAPIWrapper
 import unittest
-from mock import Mock, patch
+from mock import Mock, patch, MagicMock
 
 
 class test_DataGenerator(unittest.TestCase):
@@ -84,9 +84,20 @@ class test_DataGenerator(unittest.TestCase):
         mock_get_key.assert_called_once_with('api_key.txt')
 
     # begin tests
+    @patch('DataGeneration.DatabaseHandler.get_all_stops')
     @patch('DataGeneration.DatabaseHandler.get_address_without_route_generator')
     def test_begin_calls_handler_get_next_address(self,
-                                                  mock_get_address):
+                                                  mock_get_address,
+                                                  mock_get_all_stops):
         generator = DataGenerator()
         generator.begin()
         mock_get_address.assert_called_once_with()
+
+    @patch('DataGeneration.DatabaseHandler.get_all_stops')
+    @patch('DataGeneration.DatabaseHandler.get_address_without_route_generator')
+    def test_begin_calls_get_all_stops(self,
+                                       mock_get_address,
+                                       mock_get_all_stops):
+        generator = DataGenerator()
+        generator.begin()
+        mock_get_all_stops.assert_called_once_with()
