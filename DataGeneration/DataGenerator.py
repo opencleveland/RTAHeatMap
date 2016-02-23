@@ -16,7 +16,7 @@ class DataGenerator:
         self.wrapper = self.get_api_wrapper(api_key)
 
     def begin(self):
-        address = self.handler.get_address_without_route()
+        address_generator = self.handler.get_address_without_route_generator()
 
     def get_database_handler(self, db_file_name='db.sqlite3'):
         handler = DatabaseHandler(db_file_name)

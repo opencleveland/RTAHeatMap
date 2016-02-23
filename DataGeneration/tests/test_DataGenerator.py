@@ -84,7 +84,7 @@ class test_DataGenerator(unittest.TestCase):
         mock_get_key.assert_called_once_with('api_key.txt')
 
     # begin tests
-    @patch('DataGeneration.DatabaseHandler.get_address_without_route')
+    @patch('DataGeneration.DatabaseHandler.get_address_without_route_generator')
     def test_begin_calls_handler_get_next_address(self,
                                                   mock_get_address):
         generator = DataGenerator()
