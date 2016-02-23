@@ -31,7 +31,7 @@ class test_DataGenerator(unittest.TestCase):
     @patch('DataGeneration.DataGenerator.get_api_wrapper')
     @patch('DataGeneration.DatabaseHandler.get_all_stops')
     @patch('DataGeneration.DataGenerator.get_database_handler')
-    def test_start_initializes_database(self,
+    def test_initialize_initializes_database(self,
                                         mock_get_db,
                                         mock_get_all_stops,
                                         mock_get_api_wrapper):
@@ -43,7 +43,7 @@ class test_DataGenerator(unittest.TestCase):
     @patch('DataGeneration.DataGenerator.get_api_wrapper')
     @patch('DataGeneration.DatabaseHandler.get_all_stops')
     @patch('DataGeneration.DataGenerator.get_database_handler')
-    def test_start_pulls_all_stops(self,
+    def test_initialize_pulls_all_stops(self,
                                    mock_get_db,
                                    mock_get_all_stops,
                                    mock_get_api_wrapper):
@@ -55,7 +55,7 @@ class test_DataGenerator(unittest.TestCase):
     @patch('DataGeneration.DataGenerator.get_api_wrapper')
     @patch('DataGeneration.DatabaseHandler.get_all_stops')
     @patch('DataGeneration.DataGenerator.get_database_handler')
-    def test_start_initializes_api_wrapper(self,
+    def test_initialize_initializes_api_wrapper(self,
                                            mock_get_db,
                                            mock_get_all_stops,
                                            mock_get_api_wrapper):
