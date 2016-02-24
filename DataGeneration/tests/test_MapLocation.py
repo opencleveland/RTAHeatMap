@@ -68,3 +68,13 @@ class TestMapLocation(unittest.TestCase):
         self.assertTrue(a!=b, "MapLocations with equal latitudes and "
                                 "longitudes, but different id's should not be "
                                 "equal")
+
+    def test_locations_can_be_ordered(self):
+        a = MapLocation(latitude=1, longitude=1, id=1)
+        b = MapLocation(latitude=2, longitude=2, id=2)
+        self.assertTrue(b > a, "MapLocations should be able to be ordered")
+
+    def test_locations_can_be_ordered_opposite(self):
+        a = MapLocation(latitude=2, longitude=2, id=2)
+        b = MapLocation(latitude=1, longitude=1, id=1)
+        self.assertTrue(a > b, "MapLocations should be able to be ordered")
