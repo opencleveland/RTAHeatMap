@@ -2,5 +2,5 @@ dbfread
 pandas
 numpy
 requests
-sqlite3
 mock
+
