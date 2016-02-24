@@ -101,3 +101,14 @@ class test_DataGenerator(unittest.TestCase):
         generator = DataGenerator()
         generator.begin()
         mock_get_all_stops.assert_called_once_with()
+
+    # get_closest_locations tests
+    def test_get_closest_locations_returns_closest_single_location(self):
+        generator = DataGenerator()
+        stops = [MapLocation(1, 1, 1),
+                 MapLocation(2, 2, 2)]
+        address = MapLocation(0, 0, 0)
+        closest_stops = generator.get_closest_locations(source=address,
+                                                        destinations=stops,
+                                                        n=1)
+        self.assertEquals(MapLocation(1,1,1), closest_stops[0])

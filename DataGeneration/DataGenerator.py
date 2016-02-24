@@ -27,3 +27,6 @@ class DataGenerator:
         wrapper = MapboxAPIWrapper()
         wrapper.load_api_key_from_file(api_key_file)
         return wrapper
+
+    def get_closest_locations(self, source, destinations, n):
+        return [destinations[0]]
