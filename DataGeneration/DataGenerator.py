@@ -1,6 +1,7 @@
 from DataGeneration import DatabaseHandler
 from DataGeneration import MapLocation
 from MapboxAPIWrapper import MapboxAPIWrapper
+import math
 
 
 class DataGenerator:
@@ -29,4 +30,9 @@ class DataGenerator:
         return wrapper
 
     def get_closest_locations(self, source, destinations, n):
-        return [destinations[0]]
+        location_list = []
+        for destination in destinations:
+            distance = math.sqrt((source.latitude - destination.latitude)**2 +
+                                 (source.longitude - destination.longitude)**2)
+            location_list.append((distance, destination))
+        return [sorted(location_list)[0][1]]
