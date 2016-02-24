@@ -35,4 +35,4 @@ class DataGenerator:
             distance = math.sqrt((source.latitude - destination.latitude)**2 +
                                  (source.longitude - destination.longitude)**2)
             location_list.append((distance, destination))
-        return [sorted(location_list)[0][1]]
+        return [loc[1] for loc in sorted(location_list)[0:n]]

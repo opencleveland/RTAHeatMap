@@ -122,3 +122,15 @@ class test_DataGenerator(unittest.TestCase):
                                                         destinations=stops,
                                                         n=1)
         self.assertEqual(MapLocation(4, 4, 4), closest_stops[0])
+
+    def test_get_closest_locations_returns_closest_2_locations(self):
+        generator = DataGenerator()
+        stops = [MapLocation(1, 1, 1),
+                 MapLocation(5, 5, 5),
+                 MapLocation(6, 6, 6)]
+        address = MapLocation(4, 4, 4)
+        closest_stops = generator.get_closest_locations(source=address,
+                                                        destinations=stops,
+                                                        n=2)
+        self.assertEqual(MapLocation(5, 5, 5), closest_stops[0])
+        self.assertEqual(MapLocation(6, 6, 6), closest_stops[1])
