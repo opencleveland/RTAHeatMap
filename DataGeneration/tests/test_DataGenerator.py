@@ -91,6 +91,7 @@ class test_DataGenerator(unittest.TestCase):
                                                   mock_get_all_stops):
         generator = DataGenerator()
         generator.begin()
+
         mock_get_address.assert_called_once_with()
 
     @patch('DataGeneration.DatabaseHandler.get_all_stops')
@@ -101,6 +102,25 @@ class test_DataGenerator(unittest.TestCase):
         generator = DataGenerator()
         generator.begin()
         mock_get_all_stops.assert_called_once_with()
+
+    @patch('DataGeneration.DatabaseHandler.get_all_stops')
+    @patch('DataGeneration.DatabaseHandler.get_address_without_route_generator')
+    def test_begin_calls_get_closest_locations(self,
+                                               mock_get_address,
+                                               mock_get_all_stops):
+        generator = DataGenerator()
+
+        address = MapLocation(1, 1, 1)
+        mock_get_address.return_value = [address]  # List to emulate generator
+
+        stops = [MapLocation(2, 2, 2), MapLocation(3, 3, 3)]
+        mock_get_all_stops.return_value = stops
+
+        mock_get_closest_locations = Mock(stops[0])
+        generator.get_closest_locations = mock_get_closest_locations
+
+        generator.begin()
+        mock_get_closest_locations.assert_called_once_with(address, stops, n=1)
 
     # get_closest_locations tests
     def test_get_closest_locations_returns_closest_single_location_1(self):
