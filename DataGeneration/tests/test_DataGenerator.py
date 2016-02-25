@@ -119,7 +119,7 @@ class test_DataGenerator(unittest.TestCase):
         mock_get_closest_locations = Mock(stops[0])
         generator.get_closest_locations = mock_get_closest_locations
 
-        generator.begin()
+        generator.begin(stops_to_query=1)
         mock_get_closest_locations.assert_called_once_with(address, stops, n=1)
 
     # get_closest_locations tests
