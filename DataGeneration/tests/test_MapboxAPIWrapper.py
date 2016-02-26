@@ -90,58 +90,28 @@ class TestMapboxAPIWrapper(unittest.TestCase):
             self.wrapper.load_api_key_from_file(filename='abc.txt')
         mock_os_path.exists.assert_called_once_with('abc.txt')
 
-    # set_origin_location tests
-    def test_mapbox_set_origin_location_is_MapLocation(self):
-        self.wrapper.set_origin_location(MapLocation())
-        self.assertIsInstance(self.wrapper.origin, MapLocation)
-
-    def test_mapbox_set_origin_location_errors_for_wrong_type(self):
-        self.assertRaises(TypeError, self.wrapper.set_origin_location, "string")
-
-    # set_destination_location tests
-    def test_mapbox_set_destination_location_is_MapLocation(self):
-        self.wrapper.set_destination_location(MapLocation())
-        self.assertIsInstance(self.wrapper.destination, MapLocation)
-
-    def test_mapbox_set_destination_location_errors_for_wrong_type(self):
-        self.assertRaises(TypeError,
-                          self.wrapper.set_destination_location, "string")
-
     # construct_request_string tests
     def test_construct_request_string_returns_string(self):
-        self.wrapper.origin = MapLocation()
-        self.wrapper.destination = MapLocation()
         self.wrapper.key = 'api_key'
-        self.assertIsInstance(self.wrapper.construct_request_string(), str)
-
-    def test_construct_request_string_errors_if_no_origin(self):
-        self.wrapper.destination = MapLocation()
-        self.wrapper.key = 'api_key'
-        self.assertRaises(UnboundLocalError, self.wrapper.construct_request_string)
-
-    def test_construct_request_string_errors_if_no_destination(self):
-        self.wrapper.origin = MapLocation()
-        self.wrapper.key = 'api_key'
-        self.assertRaises(UnboundLocalError,
-                          self.wrapper.construct_request_string)
+        request_string = self.wrapper.construct_request_string(MapLocation(),
+                                                               MapLocation())
+        self.assertIsInstance(request_string, str)
 
     def test_constuct_request_string_errors_if_no_key(self):
-        self.wrapper.origin = MapLocation()
-        self.wrapper.destination = MapLocation()
-        self.assertRaises(UnboundLocalError,
-                          self.wrapper.construct_request_string)
+        with self.assertRaises(UnboundLocalError):
+            self.wrapper.construct_request_string(MapLocation(),
+                                                  MapLocation())
 
     def test_construct_request_string_produces_correct_output(self):
-        self.wrapper.origin = MapLocation(latitude = 50.032,
-                                          longitude = 40.54453)
-        self.wrapper.destination = MapLocation(latitude = 51.0345,
-                                               longitude = 41.2314)
+        origin = MapLocation(latitude=50.032, longitude=40.54453)
+        destination = MapLocation(latitude=51.0345, longitude=41.2314)
         self.wrapper.key = 'api_key'
         self.assertEqual('https://api.mapbox.com/v4/directions/mapbox.walking/'
                          '50.032,40.54453;51.0345,41.2314.json?alternatives='
                          'false&instructions=text&geometry=false&steps=false&&'
                          'access_token=api_key',
-                         self.wrapper.construct_request_string(),
+                         self.wrapper.construct_request_string(origin,
+                                                               destination),
                          'incorrect request string returned')
 
     # make_api_call tests
@@ -247,8 +217,11 @@ class TestMapboxAPIWrapper(unittest.TestCase):
         mock_call = MagicMock(return_value=[])
         self.wrapper.call_api = mock_call
 
-        self.wrapper.get_distance_from_api()
-        mock_construct.assert_called_once_with()
+        origin = MapLocation(1, 1, 1)
+        destination = MapLocation(2, 2, 2)
+
+        self.wrapper.get_distance_from_api(origin, destination)
+        mock_construct.assert_called_once_with(origin, destination)
 
     def test_get_distance_from_api_calls_make_api_call(self):
         mock_construct = MagicMock(return_value='request_string')
@@ -256,7 +229,7 @@ class TestMapboxAPIWrapper(unittest.TestCase):
         mock_call = MagicMock(return_value=[])
         self.wrapper.call_api = mock_call
 
-        self.wrapper.get_distance_from_api()
+        self.wrapper.get_distance_from_api(MapLocation(), MapLocation())
         mock_call.assert_called_once_with('request_string')
 
     # parse_response tests
