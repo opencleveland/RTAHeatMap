@@ -23,6 +23,8 @@ class DataGenerator:
             closest_stops = self.get_closest_locations(address,
                                                        all_stops,
                                                        n=stops_to_query)
+            for stop in closest_stops:
+                self.wrapper.get_distance_from_api(address, stop)
 
     def get_database_handler(self, db_file_name='db.sqlite3'):
         handler = DatabaseHandler(db_file_name)

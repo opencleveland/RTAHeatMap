@@ -116,11 +116,34 @@ class test_DataGenerator(unittest.TestCase):
         stops = [MapLocation(2, 2, 2), MapLocation(3, 3, 3)]
         mock_get_all_stops.return_value = stops
 
-        mock_get_closest_locations = Mock(stops[0])
+        mock_get_closest_locations = Mock(return_value=[stops[0]])
         generator.get_closest_locations = mock_get_closest_locations
+
+        generator.wrapper.get_distance_from_api = Mock()
 
         generator.begin(stops_to_query=1)
         mock_get_closest_locations.assert_called_once_with(address, stops, n=1)
+
+    @patch('DataGeneration.DatabaseHandler.get_all_stops')
+    @patch('DataGeneration.DatabaseHandler.get_address_without_route_generator')
+    def test_begin_calls_wrapper_get_distance_from_api(self,
+                                                       mock_get_address,
+                                                       mock_get_all_stops):
+        generator = DataGenerator()
+
+        address = MapLocation(1, 1, 1)
+        mock_get_address.return_value = [address]  # List to emulate generator
+
+        stops = [MapLocation(2, 2, 2), MapLocation(3, 3, 3)]
+        mock_get_all_stops.return_value = stops
+
+        generator.get_closest_locations = Mock(return_value=[stops[0]])
+
+        mock_get_distance = Mock()
+        generator.wrapper.get_distance_from_api = mock_get_distance
+
+        generator.begin(stops_to_query=1)
+        mock_get_distance.assert_called_once_with(address, stops[0])
 
     # get_closest_locations tests
     def test_get_closest_locations_returns_closest_single_location_1(self):
@@ -169,4 +192,3 @@ class test_DataGenerator(unittest.TestCase):
                                                         n=1)
         self.assertEqual(MapLocation(1, 1, 1), closest_stops[0],
                          "{}, should be 1, 1".format(closest_stops[0]))
-
