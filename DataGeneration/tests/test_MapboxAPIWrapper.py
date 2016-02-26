@@ -63,6 +63,11 @@ class TestMapboxAPIWrapper(unittest.TestCase):
     def test_mapbox_api_wrapper_class_exists(self):
         self.assertIsInstance(self.wrapper, MapboxAPIWrapper)
 
+    # constructor tests
+    def test_map_api_wrapper_instantiates_empty_key(self):
+        wrapper = MapboxAPIWrapper()
+        self.assertEqual(wrapper.key, "")
+
     # load_api_key_from_file tests
     @patch('MapboxAPIWrapper.os.path')
     def test_mapbox_load_api_key_checks_for_file_existance(self, mock_os_path):
@@ -97,7 +102,7 @@ class TestMapboxAPIWrapper(unittest.TestCase):
                                                                MapLocation())
         self.assertIsInstance(request_string, str)
 
-    def test_constuct_request_string_errors_if_no_key(self):
+    def test_constuct_request_string_errors_if_empty_key(self):
         with self.assertRaises(UnboundLocalError):
             self.wrapper.construct_request_string(MapLocation(),
                                                   MapLocation())

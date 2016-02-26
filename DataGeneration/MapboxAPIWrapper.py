@@ -5,7 +5,7 @@ import os
 
 class MapboxAPIWrapper:
     def __init__(self):
-        pass
+        self.key = ""
 
     def load_api_key_from_file(self, filename='api_key.txt'):
         if not os.path.exists(filename):
@@ -15,7 +15,7 @@ class MapboxAPIWrapper:
 
     def construct_request_string(self, origin, destination):
         request_string = 'https://api.mapbox.com/v4/directions/mapbox.walking/'
-        if not hasattr(self, 'key'):
+        if self.key == "":
             raise UnboundLocalError('key has not been specified')
         request_string += str(origin.latitude) + ','
         request_string += str(origin.longitude) + ';'
