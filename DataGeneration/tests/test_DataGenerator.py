@@ -9,9 +9,7 @@ from mock import Mock, patch, MagicMock
 class test_DataGenerator(unittest.TestCase):
 
     # __init__ tests
-    @patch('DataGeneration.DataGenerator.get_database_handler')
-    def test_DataGenerator_exists(self,
-                                  mock_get_db):
+    def test_DataGenerator_exists(self):
         generator = DataGenerator()
         self.assertIsInstance(generator, DataGenerator)
 
