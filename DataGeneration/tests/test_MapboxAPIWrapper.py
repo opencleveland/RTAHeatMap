@@ -1,5 +1,5 @@
 import unittest
-from mock import patch, mock_open, mock, MagicMock
+from mock import patch, mock_open, mock, MagicMock, Mock
 import requests
 from DataGeneration.MapboxAPIWrapper import MapboxAPIWrapper
 from DataGeneration.MapLocation import MapLocation
@@ -217,25 +217,33 @@ class TestMapboxAPIWrapper(unittest.TestCase):
 
     # get_distance_from_api tests
     def test_get_distance_from_api_constructs_request_string(self):
-        mock_construct = MagicMock(return_value='request_string')
-        self.wrapper.construct_request_string = mock_construct
-        mock_call = MagicMock(return_value=[])
-        self.wrapper.call_api = mock_call
+        self.wrapper.construct_request_string = Mock(return_value='request')
+        self.wrapper.call_api = Mock(return_value=[])
+        self.wrapper.parse_response = Mock()
 
         origin = MapLocation(1, 1, 1)
         destination = MapLocation(2, 2, 2)
 
         self.wrapper.get_distance_from_api(origin, destination)
-        mock_construct.assert_called_once_with(origin, destination)
+        self.wrapper.construct_request_string.\
+            assert_called_once_with(origin, destination)
 
     def test_get_distance_from_api_calls_make_api_call(self):
-        mock_construct = MagicMock(return_value='request_string')
-        self.wrapper.construct_request_string = mock_construct
-        mock_call = MagicMock(return_value=[])
-        self.wrapper.call_api = mock_call
+        self.wrapper.construct_request_string = Mock(return_value='request')
+        self.wrapper.call_api = Mock(return_value=[])
+        self.wrapper.parse_response = Mock()
 
         self.wrapper.get_distance_from_api(MapLocation(), MapLocation())
-        mock_call.assert_called_once_with('request_string')
+        self.wrapper.call_api.assert_called_once_with('request')
+
+    def test_get_distance_from_api_parses_response(self):
+        self.wrapper.construct_request_string = Mock()
+        self.wrapper.call_api = Mock(return_value="json")
+        self.wrapper.parse_response = Mock(return_value=[5, 10])
+
+        dist = self.wrapper.get_distance_from_api(MapLocation(), MapLocation())
+        self.wrapper.parse_response.assert_called_once_with("json")
+        self.assertEqual([5, 10], dist)
 
     # parse_response tests
     def test_parse_response_returns_tuple(self):
