@@ -13,6 +13,10 @@ class MapboxAPIWrapper:
         with open(filename) as key_file:
             self.key = key_file.read()
 
+    def get_distance_from_api(self, origin, destination):
+        request_string = self.construct_request_string(origin, destination)
+        return self.parse_response(self.call_api(request_string))
+
     def construct_request_string(self, origin, destination):
         request_string = 'https://api.mapbox.com/v4/directions/mapbox.walking/'
         if self.key == "":
@@ -40,10 +44,6 @@ class MapboxAPIWrapper:
                 retries -= 1
                 if not retries:
                     self._handle_connection_error(e)
-
-    def get_distance_from_api(self, origin, destination):
-        request_string = self.construct_request_string(origin, destination)
-        return self.parse_response(self.call_api(request_string))
 
     def parse_response(self, response_json):
         walking_distance = response_json['routes'][0]['distance']

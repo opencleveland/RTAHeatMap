@@ -1,5 +1,5 @@
 import unittest
-from mock import patch, mock_open, mock, MagicMock, Mock
+from mock import patch, mock_open, mock, Mock
 import requests
 from DataGeneration.MapboxAPIWrapper import MapboxAPIWrapper
 from DataGeneration.MapLocation import MapLocation
@@ -122,7 +122,7 @@ class TestMapboxAPIWrapper(unittest.TestCase):
     # make_api_call tests
     @patch('MapboxAPIWrapper.requests.get')
     def test_call_api_calls_requests_get(self, mock_get):
-        mock_response = mock.Mock()
+        mock_response = Mock()
 
         mock_response.json.return_value = self.expected_dict
         mock_get.return_value = mock_response
@@ -141,7 +141,7 @@ class TestMapboxAPIWrapper(unittest.TestCase):
     @patch('MapboxAPIWrapper.requests.get')
     def test_call_api_handles_http_error(self,
                                          mock_get, mock_http_error_handler):
-        mock_response = mock.Mock()
+        mock_response = Mock()
         http_error = requests.exceptions.HTTPError()
         mock_response.raise_for_status.side_effect = http_error
 
@@ -192,7 +192,7 @@ class TestMapboxAPIWrapper(unittest.TestCase):
     def test_get_connection_error_then_success(self, mock_get):
 
         # construct a response object for a successful call
-        mock_response = mock.Mock()
+        mock_response = Mock()
         mock_response.json.return_value = self.expected_dict
 
         # Make an instance of ConnectionError for the failure case
