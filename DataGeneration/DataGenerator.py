@@ -53,6 +53,9 @@ class DataGenerator:
                 except requests.exceptions.RequestException as e:
                     print('error processing stop: {}'.format(e.message))
                     continue
+                if verbose:
+                    print('distance: {}, time: {}'.format(result["distance"],
+                                                          result["time"]))
                 self.handler.add_route(address.id,
                                        stop.id,
                                        result["distance"],
