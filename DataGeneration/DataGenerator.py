@@ -18,10 +18,9 @@ class DataGenerator:
 
     def begin(self, stops_to_query=5):
         address_generator = self.handler.get_address_without_route_generator()
-        all_stops = self.handler.get_all_stops()
         for address in address_generator:
             closest_stops = self.get_closest_locations(address,
-                                                       all_stops,
+                                                       self.stops,
                                                        n=stops_to_query)
             for stop in closest_stops:
                 self.wrapper.get_distance_from_api(address, stop)

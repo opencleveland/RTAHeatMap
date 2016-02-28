@@ -87,50 +87,44 @@ class test_DataGenerator(unittest.TestCase):
     # begin tests
     def test_begin_calls_handler_get_next_address(self):
         self.generator.handler.get_address_without_route_generator = MagicMock()
-        self.generator.handler.get_all_stops = Mock()
 
         self.generator.begin()
         self.generator.handler.get_address_without_route_generator.\
             assert_called_once_with()
-
-    def test_begin_calls_get_all_stops(self):
-        self.generator.handler.get_address_without_route_generator = MagicMock()
-        self.generator.handler.get_all_stops = Mock()
-
-        self.generator.begin()
-        self.generator.handler.get_all_stops.assert_called_once_with()
 
     def test_begin_calls_get_closest_locations(self):
         addresses = MapLocation(1, 1, 1)
         self.generator.handler.get_address_without_route_generator = \
             MagicMock(return_value=[addresses])
 
-        stops = [MapLocation(2, 2, 2), MapLocation(3, 3, 3)]
-        self.generator.handler.get_all_stops = Mock(return_value=stops)
+        self.generator.stops = [MapLocation(2, 2, 2), MapLocation(3, 3, 3)]
 
-        mock_get_closest_locations = Mock(return_value=[stops[0]])
+        mock_get_closest_locations = Mock(return_value=[self.generator.stops[0]])
         self.generator.get_closest_locations = mock_get_closest_locations
 
         self.generator.wrapper.get_distance_from_api = Mock()
 
         self.generator.begin(stops_to_query=1)
-        mock_get_closest_locations.assert_called_once_with(addresses, stops, n=1)
+        mock_get_closest_locations.assert_called_once_with(addresses,
+                                                           self.generator.stops,
+                                                           n=1)
 
     def test_begin_calls_wrapper_get_distance_from_api(self):
         addresses = MapLocation(1, 1, 1)
         self.generator.handler.get_address_without_route_generator = \
             MagicMock(return_value=[addresses])
 
-        stops = [MapLocation(2, 2, 2), MapLocation(3, 3, 3)]
-        self.generator.handler.get_all_stops = Mock(return_value=stops)
+        self.generator.stops = [MapLocation(2, 2, 2), MapLocation(3, 3, 3)]
 
-        self.generator.get_closest_locations = Mock(return_value=[stops[0]])
+        self.generator.get_closest_locations = \
+            Mock(return_value=[self.generator.stops[0]])
 
         mock_get_distance = Mock()
         self.generator.wrapper.get_distance_from_api = mock_get_distance
 
         self.generator.begin(stops_to_query=1)
-        mock_get_distance.assert_called_once_with(addresses, stops[0])
+        mock_get_distance.assert_called_once_with(addresses,
+                                                  self.generator.stops[0])
 
     # get_closest_locations tests
     def test_get_closest_locations_returns_closest_single_location_1(self):
