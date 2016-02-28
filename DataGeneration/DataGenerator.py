@@ -38,10 +38,14 @@ class DataGenerator:
         address_generator = self.handler.get_address_generator()
         for address in address_generator:
             closest_stops = self._get_closest_locations(address,
-                                                       self.stops,
-                                                       n=stops_per_address)
+                                                        self.stops,
+                                                        n=stops_per_address)
             for stop in closest_stops:
-                self.wrapper.get_distance_from_api(address, stop)
+                results = self.wrapper.get_distance_from_api(address, stop)
+                self.handler.add_route(address.id,
+                                       stop.id,
+                                       results[0],
+                                       results[1])
 
     def _get_database_handler(self, db_file_name='db.sqlite3'):
         handler = DatabaseHandler(db_file_name)
