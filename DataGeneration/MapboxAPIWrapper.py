@@ -1,5 +1,4 @@
 import requests
-from DataGeneration.MapLocation import MapLocation
 import os
 
 
@@ -52,7 +51,11 @@ class MapboxAPIWrapper:
                 "time": walking_duration}
 
     def _handle_http_error(self, e):
-        pass
+        raise MapboxAPIError
 
     def _handle_connection_error(self, e):
-        pass
+        raise MapboxAPIError
+
+
+class MapboxAPIError(Exception):
+    pass

@@ -3,6 +3,7 @@ from mock import patch, mock_open, mock, Mock
 import requests
 from DataGeneration.MapboxAPIWrapper import MapboxAPIWrapper
 from DataGeneration.MapLocation import MapLocation
+from DataGeneration.MapboxAPIWrapper import MapboxAPIError
 
 
 from sys import version_info
@@ -14,6 +15,7 @@ else:
 
 class CustomHTTPException(Exception):
     pass
+
 
 class CustomConnException(Exception):
     pass
@@ -257,3 +259,12 @@ class TestMapboxAPIWrapper(unittest.TestCase):
     def test_parse_response_returns_duration_value_in_second_element(self):
         parsed_response = self.wrapper._parse_response(self.expected_dict)
         self.assertEqual(61045, parsed_response["time"])
+
+    # error tests
+    def test_handle_http_error_raises_MapboxAPIError(self):
+        with self.assertRaises(MapboxAPIError):
+            self.wrapper._handle_http_error(Exception())
+
+    def test_handle_connection_error_raises_MapboxAPIError(self):
+        with self.assertRaises(MapboxAPIError):
+            self.wrapper._handle_connection_error(Exception())
