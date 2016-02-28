@@ -54,9 +54,26 @@ class test_DataGenerator(unittest.TestCase):
         self.generator.get_api_wrapper.assert_called_once_with('api_key.txt')
 
     # get_database_handler tests
-    def test_get_database_handler_returns_DatabaseHandler(self):
-        generator = DataGenerator()
-        self.assertIsInstance(generator.get_database_handler(), DatabaseHandler)
+    @patch('DataGeneration.DatabaseHandler.__init__')
+    def test_get_database_handler_returns_DatabaseHandler(self,
+                                                          mock_init):
+        mock_init.return_value = None
+        self.assertIsInstance(self.generator.get_database_handler(),
+                              DatabaseHandler)
+
+    @patch('DataGeneration.DatabaseHandler.__init__')
+    def test_get_database_handler_inits_DatabaseHandler(self,
+                                                        mock_init):
+        mock_init.return_value = None
+        self.generator.get_database_handler()
+        mock_init.assert_called_once_with('db.sqlite3')
+
+    @patch('DataGeneration.DatabaseHandler.__init__')
+    def test_get_database_handler_inits_DatabaseHandler_with_db(self,
+                                                                mock_init):
+        mock_init.return_value = None
+        self.generator.get_database_handler(db_file_name='test_db')
+        mock_init.assert_called_once_with('test_db')
 
     # get_api_wrapper tests
     @patch('DataGeneration.MapboxAPIWrapper.load_api_key_from_file')
