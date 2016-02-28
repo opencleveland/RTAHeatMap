@@ -13,20 +13,16 @@ class test_DataGenerator(unittest.TestCase):
 
     # __init__ tests
     def test_DataGenerator_exists(self):
-        generator = DataGenerator()
-        self.assertIsInstance(generator, DataGenerator)
+        self.assertIsInstance(self.generator, DataGenerator)
 
     def test_constructor_sets_stops_array_to_empty_list(self):
-        generator = DataGenerator()
-        self.assertEqual([], generator.stops)
+        self.assertEqual([], self.generator.stops)
 
     def test_constructor_sets_handler_to_simple_handler(self):
-        generator = DataGenerator()
-        self.assertIsInstance(generator.handler, DatabaseHandler)
+        self.assertIsInstance(self.generator.handler, DatabaseHandler)
 
     def test_constructor_sets_wrapper_instance_variable(self):
-        generator = DataGenerator()
-        self.assertIsInstance(generator.wrapper, MapboxAPIWrapper)
+        self.assertIsInstance(self.generator.wrapper, MapboxAPIWrapper)
 
     # initialize tests
     def test_initialize_initializes_database(self):
