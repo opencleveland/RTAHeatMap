@@ -4,5 +4,6 @@
 *.sqlite3
 .idea/
 api_keys.txt
+api_key.txt
 temp
 *.csv
