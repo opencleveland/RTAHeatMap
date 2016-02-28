@@ -3,7 +3,7 @@ from DataGeneration import DatabaseHandler
 from DataGeneration import MapLocation
 from DataGeneration import MapboxAPIWrapper
 import unittest
-from mock import Mock, patch, MagicMock
+from mock import Mock, patch
 
 
 class test_DataGenerator(unittest.TestCase):
@@ -79,14 +79,13 @@ class test_DataGenerator(unittest.TestCase):
     @patch('DataGeneration.MapboxAPIWrapper.load_api_key_from_file')
     def test_get_api_wrapper_returns_MapboxAPIWrapper(self,
                                                       mock_get_key):
-        generator = DataGenerator()
-        self.assertIsInstance(generator.get_api_wrapper(), MapboxAPIWrapper)
+        self.assertIsInstance(self.generator.get_api_wrapper(),
+                              MapboxAPIWrapper)
 
     @patch('DataGeneration.MapboxAPIWrapper.load_api_key_from_file')
     def test_get_api_wrapper_pulls_api_key(self,
                                            mock_get_key):
-        generator = DataGenerator()
-        generator.get_api_wrapper()
+        self.generator.get_api_wrapper()
         mock_get_key.assert_called_once_with('api_key.txt')
 
     # begin tests
