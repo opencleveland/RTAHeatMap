@@ -107,7 +107,7 @@ class test_DataGenerator(unittest.TestCase):
             Mock(return_value={"distance": 6, "time": 9})
         self.generator.handler.add_route = Mock()
 
-        self.generator.begin(stops_per_address=1)
+        self.generator.begin(stops_per_address=1, verbose=False)
         mock_get_closest_locations.assert_called_once_with(addresses,
                                                            self.generator.stops,
                                                            n=1)
@@ -127,7 +127,7 @@ class test_DataGenerator(unittest.TestCase):
 
         self.generator.handler.add_route = Mock()
 
-        self.generator.begin(stops_per_address=1)
+        self.generator.begin(stops_per_address=1, verbose=False)
         mock_get_distance.assert_called_once_with(addresses,
                                                   self.generator.stops[0])
 
@@ -146,7 +146,7 @@ class test_DataGenerator(unittest.TestCase):
 
         self.generator.handler.add_route = Mock()
 
-        self.generator.begin(stops_per_address=1)
+        self.generator.begin(stops_per_address=1, verbose=False)
 
         self.generator.handler.add_route.assert_called_once_with(1, 2, 6, 9)
 
@@ -168,7 +168,7 @@ class test_DataGenerator(unittest.TestCase):
         mock_add_route = Mock()
         self.generator.handler.add_route = mock_add_route
 
-        self.generator.begin(stops_per_address=1)
+        self.generator.begin(stops_per_address=1, verbose=False)
 
         mock_add_route.assert_not_called()
 
