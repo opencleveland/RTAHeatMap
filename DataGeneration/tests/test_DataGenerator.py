@@ -8,6 +8,9 @@ from mock import Mock, patch, MagicMock
 
 class test_DataGenerator(unittest.TestCase):
 
+    def setUp(self):
+        self.generator = DataGenerator()
+
     # __init__ tests
     def test_DataGenerator_exists(self):
         generator = DataGenerator()
@@ -26,41 +29,29 @@ class test_DataGenerator(unittest.TestCase):
         self.assertIsInstance(generator.wrapper, MapboxAPIWrapper)
 
     # initialize tests
-    @patch('DataGeneration.DataGenerator.get_api_wrapper')
-    @patch('DataGeneration.DatabaseHandler.get_all_stops')
-    @patch('DataGeneration.DataGenerator.get_database_handler')
-    def test_initialize_initializes_database(self,
-                                        mock_get_db,
-                                        mock_get_all_stops,
-                                        mock_get_api_wrapper):
-        generator = DataGenerator()
-        mock_get_db.return_value = DatabaseHandler(full=False)
-        generator.initialize()
-        mock_get_db.assert_called_once_with('db.sqlite3')
+    def test_initialize_initializes_database(self):
+        self.generator.get_database_handler = Mock()
+        self.generator.handler.get_all_stops = Mock()
+        self.generator.get_api_wrapper = Mock()
 
-    @patch('DataGeneration.DataGenerator.get_api_wrapper')
-    @patch('DataGeneration.DatabaseHandler.get_all_stops')
-    @patch('DataGeneration.DataGenerator.get_database_handler')
-    def test_initialize_pulls_all_stops(self,
-                                   mock_get_db,
-                                   mock_get_all_stops,
-                                   mock_get_api_wrapper):
-        generator = DataGenerator()
-        mock_get_db.return_value = DatabaseHandler(full=False)
-        generator.initialize()
-        mock_get_all_stops.assert_called_once_with()
+        self.generator.initialize()
+        self.generator.get_database_handler.assert_called_once_with('db.sqlite3')
 
-    @patch('DataGeneration.DataGenerator.get_api_wrapper')
-    @patch('DataGeneration.DatabaseHandler.get_all_stops')
-    @patch('DataGeneration.DataGenerator.get_database_handler')
-    def test_initialize_initializes_api_wrapper(self,
-                                           mock_get_db,
-                                           mock_get_all_stops,
-                                           mock_get_api_wrapper):
-        generator = DataGenerator()
-        mock_get_db.return_value = DatabaseHandler(full=False)
-        generator.initialize()
-        mock_get_api_wrapper.assert_called_once_with('api_key.txt')
+    def test_initialize_pulls_all_stops(self):
+        self.generator.get_database_handler = Mock()
+        self.generator.handler.get_all_stops = Mock()
+        self.generator.get_api_wrapper = Mock()
+
+        self.generator.initialize()
+        self.generator.handler.get_all_stops.assert_called_once_with()
+
+    def test_initialize_initializes_api_wrapper(self):
+        self.generator.get_database_handler = Mock()
+        self.generator.handler.get_all_stops = Mock()
+        self.generator.get_api_wrapper = Mock()
+
+        self.generator.initialize()
+        self.generator.get_api_wrapper.assert_called_once_with('api_key.txt')
 
     # get_database_handler tests
     def test_get_database_handler_returns_DatabaseHandler(self):
