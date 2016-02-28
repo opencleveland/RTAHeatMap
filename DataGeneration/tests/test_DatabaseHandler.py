@@ -227,22 +227,22 @@ class TestDatabaseHandler(unittest.TestCase):
         self.assertEqual((1, 1, 1, 10, 20), c.fetchone())
 
     # Information Retrieval Tests
-    # get_address_without_route_generator tests
+    # get_address_generator tests
     def test_get_address_without_route_generator_returns_generator(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
-        self.assertIsInstance(handler.get_address_without_route_generator(),
+        self.assertIsInstance(handler.get_address_generator(),
                               types.GeneratorType)
 
     def test_get_address_without_route_generator_yield_MapLocations(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         handler.add_address(location=MapLocation(latitude=1, longitude=1))
-        address_generator = handler.get_address_without_route_generator()
+        address_generator = handler.get_address_generator()
         self.assertIsInstance(address_generator.next(), MapLocation)
 
     def test_get_address_without_route_returns_address_when_routes_empty(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         handler.add_address(location=MapLocation(latitude=5, longitude=6, id=1))
-        address_generator = handler.get_address_without_route_generator()
+        address_generator = handler.get_address_generator()
         self.assertEqual(MapLocation(latitude=5, longitude=6, id=1),
                          address_generator.next(),
                          "Only MapLocation in addresses was not returned")
@@ -250,7 +250,7 @@ class TestDatabaseHandler(unittest.TestCase):
     def test_get_address_without_route_returns_with_correct_id(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         handler.add_address(MapLocation(latitude=2, longitude=2, id=222))
-        address_generator = handler.get_address_without_route_generator()
+        address_generator = handler.get_address_generator()
         self.assertEqual(MapLocation(latitude=2, longitude=2, id=222),
                          address_generator.next(),
                          "MapLocation should return correct id")
@@ -264,7 +264,7 @@ class TestDatabaseHandler(unittest.TestCase):
         c.execute("INSERT INTO routes (address_id, stop_id, distance, time)"
                   "VALUES (1, 1, 1, 1)")
         c.close()
-        address_generator = handler.get_address_without_route_generator()
+        address_generator = handler.get_address_generator()
         self.assertEqual(MapLocation(latitude=3, longitude=4, id=2),
                          address_generator.next(),
                          "the MapLocation without route was not returned")
@@ -273,7 +273,7 @@ class TestDatabaseHandler(unittest.TestCase):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         handler.add_address(location=MapLocation(latitude=1, longitude=1))
         handler.add_address(location=MapLocation(latitude=2, longitude=2))
-        address_generator = handler.get_address_without_route_generator()
+        address_generator = handler.get_address_generator()
         self.assertEqual(MapLocation(latitude=1, longitude=1, id=1),
                          address_generator.next(),
                          "first returned MapLocation was not correct")

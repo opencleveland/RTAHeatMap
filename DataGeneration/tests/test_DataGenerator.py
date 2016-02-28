@@ -86,15 +86,15 @@ class test_DataGenerator(unittest.TestCase):
 
     # begin tests
     def test_begin_calls_handler_get_next_address(self):
-        self.generator.handler.get_address_without_route_generator = MagicMock()
+        self.generator.handler.get_address_generator = MagicMock()
 
         self.generator.begin()
-        self.generator.handler.get_address_without_route_generator.\
+        self.generator.handler.get_address_generator.\
             assert_called_once_with()
 
     def test_begin_calls_get_closest_locations(self):
         addresses = MapLocation(1, 1, 1)
-        self.generator.handler.get_address_without_route_generator = \
+        self.generator.handler.get_address_generator = \
             MagicMock(return_value=[addresses])
 
         self.generator.stops = [MapLocation(2, 2, 2), MapLocation(3, 3, 3)]
@@ -111,7 +111,7 @@ class test_DataGenerator(unittest.TestCase):
 
     def test_begin_calls_wrapper_get_distance_from_api(self):
         addresses = MapLocation(1, 1, 1)
-        self.generator.handler.get_address_without_route_generator = \
+        self.generator.handler.get_address_generator = \
             MagicMock(return_value=[addresses])
 
         self.generator.stops = [MapLocation(2, 2, 2), MapLocation(3, 3, 3)]

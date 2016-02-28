@@ -101,7 +101,7 @@ class DatabaseHandler:
         c.close()
 
     # Information Retrieval
-    def get_address_without_route_generator(self):
+    def get_address_generator(self):
         c = self.conn.cursor()
         c.execute("SELECT "
                   "addresses.latitude, addresses.longitude, addresses.id "
