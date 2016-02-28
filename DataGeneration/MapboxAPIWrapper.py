@@ -20,10 +20,10 @@ class MapboxAPIWrapper:
         request_string = 'https://api.mapbox.com/v4/directions/mapbox.walking/'
         if self.key == "":
             raise UnboundLocalError('key has not been specified')
-        request_string += str(origin.latitude) + ','
-        request_string += str(origin.longitude) + ';'
-        request_string += str(destination.latitude) + ','
-        request_string += str(destination.longitude)
+        request_string += str(origin.longitude) + ','
+        request_string += str(origin.latitude) + ';'
+        request_string += str(destination.longitude) + ','
+        request_string += str(destination.latitude)
         request_string += ('.json?alternatives=false&instructions=text&'
                            'geometry=false&steps=false&&access_token=')
         request_string += self.key

@@ -114,7 +114,7 @@ class TestMapboxAPIWrapper(unittest.TestCase):
         destination = MapLocation(latitude=51.0345, longitude=41.2314)
         self.wrapper.key = 'api_key'
         self.assertEqual('https://api.mapbox.com/v4/directions/mapbox.walking/'
-                         '50.032,40.54453;51.0345,41.2314.json?alternatives='
+                         '40.54453,50.032;41.2314,51.0345.json?alternatives='
                          'false&instructions=text&geometry=false&steps=false&&'
                          'access_token=api_key',
                          self.wrapper._construct_request_string(origin,
