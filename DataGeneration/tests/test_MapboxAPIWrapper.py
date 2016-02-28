@@ -95,16 +95,16 @@ class TestMapboxAPIWrapper(unittest.TestCase):
             self.wrapper.load_api_key_from_file(filename='abc.txt')
         mock_os_path.exists.assert_called_once_with('abc.txt')
 
-    # construct_request_string tests
+    # _construct_request_string tests
     def test_construct_request_string_returns_string(self):
         self.wrapper.key = 'api_key'
-        request_string = self.wrapper.construct_request_string(MapLocation(),
+        request_string = self.wrapper._construct_request_string(MapLocation(),
                                                                MapLocation())
         self.assertIsInstance(request_string, str)
 
     def test_constuct_request_string_errors_if_empty_key(self):
         with self.assertRaises(UnboundLocalError):
-            self.wrapper.construct_request_string(MapLocation(),
+            self.wrapper._construct_request_string(MapLocation(),
                                                   MapLocation())
 
     def test_construct_request_string_produces_correct_output(self):
@@ -115,7 +115,7 @@ class TestMapboxAPIWrapper(unittest.TestCase):
                          '50.032,40.54453;51.0345,41.2314.json?alternatives='
                          'false&instructions=text&geometry=false&steps=false&&'
                          'access_token=api_key',
-                         self.wrapper.construct_request_string(origin,
+                         self.wrapper._construct_request_string(origin,
                                                                destination),
                          'incorrect request string returned')
 
@@ -132,7 +132,7 @@ class TestMapboxAPIWrapper(unittest.TestCase):
               'false&instructions=text&geometry=false&steps=false&&' \
               'access_token=api_key'
 
-        response_dict = self.wrapper.call_api(request_url=url)
+        response_dict = self.wrapper._call_api(request_url=url)
         mock_get.assert_called_once_with(url=url)
         mock_response.json.assert_called_once_with()
         self.assertEqual(response_dict, self.expected_dict)
@@ -154,7 +154,7 @@ class TestMapboxAPIWrapper(unittest.TestCase):
               'false&instructions=text&geometry=false&steps=false&&' \
               'access_token=api_key'
         with self.assertRaises(CustomHTTPException):
-            self.wrapper.call_api(request_url=url)
+            self.wrapper._call_api(request_url=url)
 
         mock_get.assert_called_once_with(url=url)
         self.assertEqual(1, mock_response.raise_for_status.call_count)
@@ -179,7 +179,7 @@ class TestMapboxAPIWrapper(unittest.TestCase):
               'false&instructions=text&geometry=false&steps=false&&' \
               'access_token=api_key'
         with self.assertRaises(CustomConnException):
-            self.wrapper.call_api(request_url=url)
+            self.wrapper._call_api(request_url=url)
 
         # Check that the function tried and failed to make 3 calls
         expected_calls = [mock.call(url=url)] * 3
@@ -205,7 +205,7 @@ class TestMapboxAPIWrapper(unittest.TestCase):
               '50.032,40.54453;51.0345,41.2314.json?alternatives=' \
               'false&instructions=text&geometry=false&steps=false&&' \
               'access_token=api_key'
-        response_dict = self.wrapper.call_api(request_url=url)
+        response_dict = self.wrapper._call_api(request_url=url)
 
         # Check that the function made the expected internal calls
         expected_calls = [mock.call(url=url)] * 3
@@ -217,43 +217,43 @@ class TestMapboxAPIWrapper(unittest.TestCase):
 
     # get_distance_from_api tests
     def test_get_distance_from_api_constructs_request_string(self):
-        self.wrapper.construct_request_string = Mock(return_value='request')
-        self.wrapper.call_api = Mock(return_value=[])
-        self.wrapper.parse_response = Mock()
+        self.wrapper._construct_request_string = Mock(return_value='request')
+        self.wrapper._call_api = Mock(return_value=[])
+        self.wrapper._parse_response = Mock()
 
         origin = MapLocation(1, 1, 1)
         destination = MapLocation(2, 2, 2)
 
         self.wrapper.get_distance_from_api(origin, destination)
-        self.wrapper.construct_request_string.\
+        self.wrapper._construct_request_string.\
             assert_called_once_with(origin, destination)
 
     def test_get_distance_from_api_calls_make_api_call(self):
-        self.wrapper.construct_request_string = Mock(return_value='request')
-        self.wrapper.call_api = Mock(return_value=[])
-        self.wrapper.parse_response = Mock()
+        self.wrapper._construct_request_string = Mock(return_value='request')
+        self.wrapper._call_api = Mock(return_value=[])
+        self.wrapper._parse_response = Mock()
 
         self.wrapper.get_distance_from_api(MapLocation(), MapLocation())
-        self.wrapper.call_api.assert_called_once_with('request')
+        self.wrapper._call_api.assert_called_once_with('request')
 
     def test_get_distance_from_api_parses_response(self):
-        self.wrapper.construct_request_string = Mock()
-        self.wrapper.call_api = Mock(return_value="json")
-        self.wrapper.parse_response = Mock(return_value=[5, 10])
+        self.wrapper._construct_request_string = Mock()
+        self.wrapper._call_api = Mock(return_value="json")
+        self.wrapper._parse_response = Mock(return_value=[5, 10])
 
         dist = self.wrapper.get_distance_from_api(MapLocation(), MapLocation())
-        self.wrapper.parse_response.assert_called_once_with("json")
+        self.wrapper._parse_response.assert_called_once_with("json")
         self.assertEqual([5, 10], dist)
 
-    # parse_response tests
+    # _parse_response tests
     def test_parse_response_returns_tuple(self):
-        self.assertIsInstance(self.wrapper.parse_response(self.expected_dict),
+        self.assertIsInstance(self.wrapper._parse_response(self.expected_dict),
                               tuple)
 
     def test_parse_response_returns_distance_value_in_first_element(self):
-        parsed_response = self.wrapper.parse_response(self.expected_dict)
+        parsed_response = self.wrapper._parse_response(self.expected_dict)
         self.assertEqual(221074, parsed_response[0])
 
     def test_parse_response_returns_duration_value_in_second_element(self):
-        parsed_response = self.wrapper.parse_response(self.expected_dict)
+        parsed_response = self.wrapper._parse_response(self.expected_dict)
         self.assertEqual(61045, parsed_response[1])

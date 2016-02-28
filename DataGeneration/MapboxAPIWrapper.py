@@ -14,10 +14,10 @@ class MapboxAPIWrapper:
             self.key = key_file.read()
 
     def get_distance_from_api(self, origin, destination):
-        request_string = self.construct_request_string(origin, destination)
-        return self.parse_response(self.call_api(request_string))
+        request_string = self._construct_request_string(origin, destination)
+        return self._parse_response(self._call_api(request_string))
 
-    def construct_request_string(self, origin, destination):
+    def _construct_request_string(self, origin, destination):
         request_string = 'https://api.mapbox.com/v4/directions/mapbox.walking/'
         if self.key == "":
             raise UnboundLocalError('key has not been specified')
@@ -30,7 +30,7 @@ class MapboxAPIWrapper:
         request_string += self.key
         return request_string
 
-    def call_api(self, request_url, retries=3):
+    def _call_api(self, request_url, retries=3):
         while retries > 0:
             try:
                 response = requests.get(url=request_url)
@@ -45,7 +45,7 @@ class MapboxAPIWrapper:
                 if not retries:
                     self._handle_connection_error(e)
 
-    def parse_response(self, response_json):
+    def _parse_response(self, response_json):
         walking_distance = response_json['routes'][0]['distance']
         walking_duration = response_json['routes'][0]['duration']
         return walking_distance, walking_duration
