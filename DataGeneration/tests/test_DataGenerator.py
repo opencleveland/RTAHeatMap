@@ -2,6 +2,7 @@ from DataGeneration import DataGenerator
 from DataGeneration import DatabaseHandler
 from DataGeneration import MapLocation
 from DataGeneration import MapboxAPIWrapper
+from MapboxAPIWrapper import MapboxAPIError
 import unittest
 from mock import Mock, patch, MagicMock
 
@@ -148,6 +149,28 @@ class test_DataGenerator(unittest.TestCase):
         self.generator.begin(stops_per_address=1)
 
         self.generator.handler.add_route.assert_called_once_with(1, 2, 6, 9)
+
+    @patch('DataGeneration.MapboxAPIWrapper.get_distance_from_api')
+    def test_begin_doesnt_call_add_route_if_MapboxAPIError_occurs(self,
+                                                                  mock_api):
+        addresses = MapLocation(1, 1, 1)
+        self.generator.handler.get_address_generator = \
+            MagicMock(return_value=[addresses])
+
+        self.generator.stops = [MapLocation(2, 2, 2)]
+
+        self.generator._get_closest_locations = \
+            Mock(return_value=[self.generator.stops[0]])
+
+        # force get_distance_from_api to raise a MapboxAPIError exception
+        mock_api.side_effect = MapboxAPIError("API Error")
+
+        mock_add_route = Mock()
+        self.generator.handler.add_route = mock_add_route
+
+        self.generator.begin(stops_per_address=1)
+
+        mock_add_route.assert_not_called()
 
     # get_closest_locations tests
     def test_get_closest_locations_returns_closest_single_location_1(self):

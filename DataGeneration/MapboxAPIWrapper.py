@@ -51,11 +51,11 @@ class MapboxAPIWrapper:
                 "time": walking_duration}
 
     def _handle_http_error(self, e):
-        raise MapboxAPIError
+        raise MapboxAPIError("HTTP Error")
 
     def _handle_connection_error(self, e):
-        raise MapboxAPIError
+        raise MapboxAPIError("Connection Error")
 
 
-class MapboxAPIError(Exception):
+class MapboxAPIError(requests.exceptions.RequestException):
     pass

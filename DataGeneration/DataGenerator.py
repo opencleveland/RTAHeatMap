@@ -1,6 +1,8 @@
 from DataGeneration import DatabaseHandler
 from MapboxAPIWrapper import MapboxAPIWrapper
+from MapboxAPIWrapper import MapboxAPIError
 import math
+import requests
 
 
 class DataGenerator:
@@ -40,7 +42,10 @@ class DataGenerator:
                                                         self.stops,
                                                         n=stops_per_address)
             for stop in closest_stops:
-                result = self.wrapper.get_distance_from_api(address, stop)
+                try:
+                    result = self.wrapper.get_distance_from_api(address, stop)
+                except requests.exceptions.RequestException:
+                    continue
                 self.handler.add_route(address.id,
                                        stop.id,
                                        result["distance"],
