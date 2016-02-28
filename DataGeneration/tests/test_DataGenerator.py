@@ -102,7 +102,8 @@ class test_DataGenerator(unittest.TestCase):
         mock_get_closest_locations = Mock(return_value=[self.generator.stops[0]])
         self.generator._get_closest_locations = mock_get_closest_locations
 
-        self.generator.wrapper.get_distance_from_api = Mock(return_value=(6, 9))
+        self.generator.wrapper.get_distance_from_api = \
+            Mock(return_value={"distance": 6, "time": 9})
         self.generator.handler.add_route = Mock()
 
         self.generator.begin(stops_per_address=1)
@@ -120,7 +121,7 @@ class test_DataGenerator(unittest.TestCase):
         self.generator._get_closest_locations = \
             Mock(return_value=[self.generator.stops[0]])
 
-        mock_get_distance = Mock(return_value=(6, 9))
+        mock_get_distance = Mock(return_value={"distance": 6, "time": 9})
         self.generator.wrapper.get_distance_from_api = mock_get_distance
 
         self.generator.handler.add_route = Mock()
@@ -139,7 +140,8 @@ class test_DataGenerator(unittest.TestCase):
         self.generator._get_closest_locations = \
             Mock(return_value=[self.generator.stops[0]])
 
-        self.generator.wrapper.get_distance_from_api = Mock(return_value=(6, 9))
+        self.generator.wrapper.get_distance_from_api = \
+            Mock(return_value={"distance": 6, "time": 9})
 
         self.generator.handler.add_route = Mock()
 

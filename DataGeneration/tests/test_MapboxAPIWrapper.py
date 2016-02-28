@@ -248,12 +248,12 @@ class TestMapboxAPIWrapper(unittest.TestCase):
     # _parse_response tests
     def test_parse_response_returns_tuple(self):
         self.assertIsInstance(self.wrapper._parse_response(self.expected_dict),
-                              tuple)
+                              dict)
 
     def test_parse_response_returns_distance_value_in_first_element(self):
         parsed_response = self.wrapper._parse_response(self.expected_dict)
-        self.assertEqual(221074, parsed_response[0])
+        self.assertEqual(221074, parsed_response["distance"])
 
     def test_parse_response_returns_duration_value_in_second_element(self):
         parsed_response = self.wrapper._parse_response(self.expected_dict)
-        self.assertEqual(61045, parsed_response[1])
+        self.assertEqual(61045, parsed_response["time"])

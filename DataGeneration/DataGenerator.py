@@ -1,5 +1,4 @@
 from DataGeneration import DatabaseHandler
-from DataGeneration import MapLocation
 from MapboxAPIWrapper import MapboxAPIWrapper
 import math
 
@@ -41,11 +40,11 @@ class DataGenerator:
                                                         self.stops,
                                                         n=stops_per_address)
             for stop in closest_stops:
-                results = self.wrapper.get_distance_from_api(address, stop)
+                result = self.wrapper.get_distance_from_api(address, stop)
                 self.handler.add_route(address.id,
                                        stop.id,
-                                       results[0],
-                                       results[1])
+                                       result["distance"],
+                                       result["time"])
 
     def _get_database_handler(self, db_file_name='db.sqlite3'):
         handler = DatabaseHandler(db_file_name)

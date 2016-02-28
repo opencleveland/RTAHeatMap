@@ -48,7 +48,8 @@ class MapboxAPIWrapper:
     def _parse_response(self, response_json):
         walking_distance = response_json['routes'][0]['distance']
         walking_duration = response_json['routes'][0]['duration']
-        return walking_distance, walking_duration
+        return {"distance": walking_distance,
+                "time": walking_duration}
 
     def _handle_http_error(self, e):
         pass
