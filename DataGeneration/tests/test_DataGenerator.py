@@ -89,9 +89,9 @@ class test_DataGenerator(unittest.TestCase):
     def test_begin_calls_handler_get_next_address(self):
         self.generator.handler.get_address_generator = MagicMock()
 
-        self.generator.begin()
+        self.generator.begin(verbose=False)
         self.generator.handler.get_address_generator.\
-            assert_called_once_with()
+            assert_called_once_with(verbose=False)
 
     def test_begin_calls_get_closest_locations(self):
         addresses = MapLocation(1, 1, 1)

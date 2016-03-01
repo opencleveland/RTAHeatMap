@@ -101,15 +101,20 @@ class DatabaseHandler:
         c.close()
 
     # Information Retrieval
-    def get_address_generator(self):
+    def get_address_generator(self, verbose=False):
         c = self.conn.cursor()
         c.execute("SELECT "
                   "addresses.latitude, addresses.longitude, addresses.id "
                   "FROM addresses LEFT JOIN routes "
                   "ON routes.id = addresses.id "
                   "WHERE routes.id IS NULL")
-        while True:
-            row = c.fetchone()
+        if verbose:
+            print("fetching all addresses without routes...")
+        rows = c.fetchall()
+        c.close()
+        if verbose:
+            print("fetched {} addresses".format(len(rows)))
+        for row in rows:
             yield MapLocation(latitude=row[0], longitude=row[1], id=row[2])
 
     def get_all_stops(self):
