@@ -106,7 +106,7 @@ class DatabaseHandler:
         c.execute("SELECT "
                   "addresses.latitude, addresses.longitude, addresses.id "
                   "FROM addresses LEFT JOIN routes "
-                  "ON routes.id = addresses.id "
+                  "ON routes.address_id = addresses.id "
                   "WHERE routes.id IS NULL")
         if verbose:
             print("fetching all addresses without routes...")
