@@ -126,7 +126,10 @@ class DatabaseHandler:
                 for row in rows]
 
     def output_routes(self, file_path):
-        df = pd.read_sql_query(
+        return self.routes_dataframe().to_csv(file_path)
+
+    def routes_dataframe(self):
+        return pd.read_sql_query(
             "SELECT "
             "addresses.latitude AS address_latitude,"
             "addresses.longitude AS address_longitude,"
@@ -138,4 +141,3 @@ class DatabaseHandler:
             "LEFT JOIN addresses ON routes.address_id = addresses.id "
             "LEFT JOIN stops ON routes.stop_id = stops.id",
             self.conn)
-        df.to_csv(file_path)

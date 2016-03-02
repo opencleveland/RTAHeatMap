@@ -308,7 +308,7 @@ class TestDatabaseHandler(unittest.TestCase):
         self.assertTrue(os.path.exists('test_file.csv'),
                         'test_file.csv file not found')
         output = pd.read_csv('test_file.csv')
-        self.assertNotEqual(0, output.shape[0], "no output data in .csv")
+        self.assertNotEqual(0, output.shape[0], "no output rows in output .csv")
         self.assertEqual(3, output.ix[0, 'address_latitude'],
                          'incorrect address latitude output')
         self.assertEqual(4, output.ix[0, 'address_longitude'],
@@ -320,4 +320,26 @@ class TestDatabaseHandler(unittest.TestCase):
         self.assertEqual(50, output.ix[0, 'distance'],
                          'incorrect distance output')
         self.assertEqual(100, output.ix[0, 'time'],
+                         'incorrect time output')
+
+    # routes_dataframe tests
+    def test_routes_dataframe_has_correct_values(self):
+        handler = DatabaseHandler('unit_test_db.sqlite3')
+        handler.initialize_db()
+        handler.add_address(MapLocation(latitude=11, longitude=50, id=11))
+        handler.add_stop(MapLocation(latitude=-10, longitude=3, id=800))
+        handler.add_route(address=11, stop=800, distance=10000, time=50000)
+        df = handler.routes_dataframe()
+        self.assertNotEqual(0, df.shape[0], "no output rows in dataframe")
+        self.assertEqual(11, df.ix[0, 'address_latitude'],
+                         'incorrect address latitude output')
+        self.assertEqual(50, df.ix[0, 'address_longitude'],
+                         'incorrect address longitude output')
+        self.assertEqual(-10, df.ix[0, 'stop_latitude'],
+                         'incorrect stop latitude output')
+        self.assertEqual(3, df.ix[0, 'stop_longitude'],
+                         'incorrect stop longitude output')
+        self.assertEqual(10000, df.ix[0, 'distance'],
+                         'incorrect distance output')
+        self.assertEqual(50000, df.ix[0, 'time'],
                          'incorrect time output')
