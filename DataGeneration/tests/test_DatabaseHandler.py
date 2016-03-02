@@ -281,43 +281,6 @@ class TestDatabaseHandler(unittest.TestCase):
                          address_generator.next(),
                          "second returned MapLocation was not correct")
 
-    # id existence tests
-    @patch('DatabaseHandler.DatabaseHandler.initialize_db')
-    def test_address_id_in_table_returns_false_if_not_present(self,
-                                                              mock_init_db):
-        handler = DatabaseHandler('unit_test_db.sqlite3')
-        handler._add_addresses_table()
-        c = handler.conn.cursor()
-        c.execute("INSERT INTO addresses VALUES (1, 3, 7)")
-        self.assertEqual(False, handler._address_id_in_table(id=2))
-
-    @patch('DatabaseHandler.DatabaseHandler.initialize_db')
-    def test_address_id_in_table_returns_true_if_present(self,
-                                                         mock_init_db):
-        handler = DatabaseHandler('unit_test_db.sqlite3')
-        handler._add_addresses_table()
-        c = handler.conn.cursor()
-        c.execute("INSERT INTO addresses VALUES (1, 5, 10)")
-        self.assertEqual(True, handler._address_id_in_table(id=1))
-
-    @patch('DatabaseHandler.DatabaseHandler.initialize_db')
-    def test_stop_id_in_table_returns_false_if_not_present(self,
-                                                           mock_init_db):
-        handler = DatabaseHandler('unit_test_db.sqlite3')
-        handler._add_stops_table()
-        c = handler.conn.cursor()
-        c.execute("INSERT INTO stops VALUES (1, 3, 7)")
-        self.assertEqual(False, handler._stop_id_in_table(id=2))
-
-    @patch('DatabaseHandler.DatabaseHandler.initialize_db')
-    def test_stop_id_in_table_returns_true_if_present(self,
-                                                      mock_init_db):
-        handler = DatabaseHandler('unit_test_db.sqlite3')
-        handler._add_stops_table()
-        c = handler.conn.cursor()
-        c.execute("INSERT INTO stops VALUES (1, 5, 10)")
-        self.assertEqual(True, handler._stop_id_in_table(id=1))
-
     @patch('DatabaseHandler.DatabaseHandler.initialize_db')
     def test_get_all_stops_returns_list_of_MapLocations(self,
                                                         mock_init_db):

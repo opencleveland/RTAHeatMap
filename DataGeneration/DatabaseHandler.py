@@ -124,13 +124,3 @@ class DatabaseHandler:
         c.close()
         return [MapLocation(latitude=row[1], longitude=row[2], id=row[0])
                 for row in rows]
-
-    def _address_id_in_table(self, id):
-        c = self.conn.cursor()
-        c.execute("SELECT * from addresses WHERE id=?", (id, ))
-        return True if c.fetchone() else False
-
-    def _stop_id_in_table(self, id):
-        c = self.conn.cursor()
-        c.execute("SELECT * FROM stops WHERE id=?", (id, ))
-        return True if c.fetchone() else False
