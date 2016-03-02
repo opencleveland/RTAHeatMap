@@ -124,3 +124,18 @@ class DatabaseHandler:
         c.close()
         return [MapLocation(latitude=row[1], longitude=row[2], id=row[0])
                 for row in rows]
+
+    def output_routes(self, file_path):
+        df = pd.read_sql_query(
+            "SELECT "
+            "addresses.latitude AS address_latitude,"
+            "addresses.longitude AS address_longitude,"
+            "stops.latitude AS stop_latitude,"
+            "stops.longitude AS stop_longitude,"
+            "routes.distance AS distance,"
+            "routes.time AS time "
+            "FROM routes "
+            "LEFT JOIN addresses ON routes.address_id = addresses.id "
+            "LEFT JOIN stops ON routes.stop_id = stops.id",
+            self.conn)
+        df.to_csv(file_path)

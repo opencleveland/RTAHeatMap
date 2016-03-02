@@ -4,6 +4,7 @@ from DatabaseHandler import DatabaseHandler
 from DataGeneration.MapLocation import MapLocation
 import os
 import types
+import pandas as pd
 
 
 class TestDatabaseHandler(unittest.TestCase):
@@ -11,6 +12,8 @@ class TestDatabaseHandler(unittest.TestCase):
     def setUp(self):
         if os.path.exists('unit_test_db.sqlite3'):
             os.remove('unit_test_db.sqlite3')
+        if os.path.exists('test_file.csv'):
+            os.remove('test_file.csv')
 
     def tearDown(self):
         if os.path.exists('unit_test_db.sqlite3'):
@@ -281,6 +284,7 @@ class TestDatabaseHandler(unittest.TestCase):
                          address_generator.next(),
                          "second returned MapLocation was not correct")
 
+    # get_all_stops tests
     @patch('DatabaseHandler.DatabaseHandler.initialize_db')
     def test_get_all_stops_returns_list_of_MapLocations(self,
                                                         mock_init_db):
@@ -291,3 +295,29 @@ class TestDatabaseHandler(unittest.TestCase):
         stops = handler.get_all_stops()
         self.assertEqual((5, 6), (stops[0].latitude, stops[0].longitude))
         self.assertEqual((3, -5), (stops[1].latitude, stops[1].longitude))
+
+    # output_routes tests
+    def test_output_routes_outputs_single_route(self):
+        handler = DatabaseHandler('unit_test_db.sqlite3')
+        handler.initialize_db()
+        handler.add_address(MapLocation(latitude=3, longitude=4, id=1))
+        handler.add_stop(MapLocation(latitude=9, longitude=10, id=1))
+        handler.add_route(address=1, stop=1, distance=50, time=100)
+
+        handler.output_routes(file_path='test_file.csv')
+        self.assertTrue(os.path.exists('test_file.csv'),
+                        'test_file.csv file not found')
+        output = pd.read_csv('test_file.csv')
+        self.assertNotEqual(0, output.shape[0], "no output data in .csv")
+        self.assertEqual(3, output.ix[0, 'address_latitude'],
+                         'incorrect address latitude output')
+        self.assertEqual(4, output.ix[0, 'address_longitude'],
+                         'incorrect address longitude output')
+        self.assertEqual(9, output.ix[0, 'stop_latitude'],
+                         'incorrect stop latitude output')
+        self.assertEqual(10, output.ix[0, 'stop_longitude'],
+                         'incorrect stop longitude output')
+        self.assertEqual(50, output.ix[0, 'distance'],
+                         'incorrect distance output')
+        self.assertEqual(100, output.ix[0, 'time'],
+                         'incorrect time output')
