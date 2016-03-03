@@ -330,7 +330,7 @@ class TestDatabaseHandler(unittest.TestCase):
         handler.add_stop(MapLocation(latitude=-10, longitude=3, id=800))
         handler.add_route(address=11, stop=800, distance=10000, time=50000)
         df = handler.routes_dataframe()
-        self.assertNotEqual(0, df.shape[0], "no output rows in dataframe")
+        self.assertEqual(1, df.shape[0], "only one row should be output")
         self.assertEqual(11, df.ix[0, 'address_latitude'],
                          'incorrect address latitude output')
         self.assertEqual(50, df.ix[0, 'address_longitude'],
@@ -343,3 +343,25 @@ class TestDatabaseHandler(unittest.TestCase):
                          'incorrect distance output')
         self.assertEqual(50000, df.ix[0, 'time'],
                          'incorrect time output')
+
+    def test_routes_dataframe_only_grabs_routes_no_dangling_locations(self):
+        handler = DatabaseHandler('unit_test_db.sqlite3')
+        handler.initialize_db()
+        handler.add_address(MapLocation(latitude=1, longitude=1, id=1))
+        handler.add_address(MapLocation(latitude=2, longitude=2, id=2))
+        handler.add_address(MapLocation(latitude=3, longitude=3, id=3))
+        handler.add_stop(MapLocation(latitude=11, longitude=11, id=11))
+        handler.add_stop(MapLocation(latitude=12, longitude=12, id=12))
+        handler.add_stop(MapLocation(latitude=13, longitude=13, id=13))
+        handler.add_route(address=1, stop=11, distance=100, time=1000)
+        handler.add_route(address=3, stop=13, distance=100, time=1000)
+        df = handler.routes_dataframe()
+        self.assertEqual(2, df.shape[0], "should be 2 output rows")
+        self.assertEqual(1, df.ix[0, 'address_latitude'],
+                         'incorrect address latitude output')
+        self.assertEqual(3, df.ix[1, 'address_latitude'],
+                         'incorrect address latitude output')
+        self.assertEqual(11, df.ix[0, 'stop_latitude'],
+                         'incorrect stop latitude output')
+        self.assertEqual(13, df.ix[1, 'stop_latitude'],
+                         'incorrect stop latitude output')
