@@ -45,21 +45,24 @@ class DataGenerator:
                                                         self.stops,
                                                         n=stops_per_address)
             for stop in closest_stops:
-                if verbose:
-                    print('processing stop: {}, {}, id: {}'.
-                          format(stop.latitude, stop.longitude, stop.id))
                 try:
-                    result = self.wrapper.get_distance_from_api(address, stop)
+                    self.process_stop(address, stop, verbose)
                 except requests.exceptions.RequestException as e:
                     print('error processing stop: {}'.format(e.message))
                     continue
-                if verbose:
-                    print('distance: {}, time: {}'.format(result["distance"],
-                                                          result["time"]))
-                self.handler.add_route(address.id,
-                                       stop.id,
-                                       result["distance"],
-                                       result["time"])
+
+    def process_stop(self, address, stop, verbose):
+        if verbose:
+            print('processing stop: {}, {}, id: {}'.
+                  format(stop.latitude, stop.longitude, stop.id))
+        result = self.wrapper.get_distance_from_api(address, stop)
+        if verbose:
+            print('distance: {}, time: {}'.format(result["distance"],
+                                                  result["time"]))
+        self.handler.add_route(address.id,
+                               stop.id,
+                               result["distance"],
+                               result["time"])
 
     def _get_database_handler(self, db_file_name='db.sqlite3'):
         handler = DatabaseHandler(db_file_name)

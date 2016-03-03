@@ -4,7 +4,7 @@ from DataGeneration import MapLocation
 from DataGeneration import MapboxAPIWrapper
 from MapboxAPIWrapper import MapboxAPIError
 import unittest
-from mock import Mock, patch, MagicMock
+from mock import Mock, patch, MagicMock, mock
 
 
 class test_DataGenerator(unittest.TestCase):
@@ -112,43 +112,26 @@ class test_DataGenerator(unittest.TestCase):
                                                            self.generator.stops,
                                                            n=1)
 
-    def test_begin_calls_wrapper_get_distance_from_api(self):
-        addresses = MapLocation(1, 1, 1)
+    def test_begin_calls_process_stop_for_each_stop(self):
+        address = MapLocation(1, 1, 1)
         self.generator.handler.get_address_generator = \
-            MagicMock(return_value=[addresses])
+            MagicMock(return_value=[address])
 
-        self.generator.stops = [MapLocation(2, 2, 2), MapLocation(3, 3, 3)]
+        stops = [MapLocation(2, 2, 2), MapLocation(3, 3, 3)]
 
-        self.generator._get_closest_locations = \
-            Mock(return_value=[self.generator.stops[0]])
+        mock_get_closest_locations = Mock(return_value=stops)
+        self.generator._get_closest_locations = mock_get_closest_locations
 
-        mock_get_distance = Mock(return_value={"distance": 6, "time": 9})
-        self.generator.wrapper.get_distance_from_api = mock_get_distance
+        mock_process_stop = Mock()
+        self.generator.process_stop = mock_process_stop
 
-        self.generator.handler.add_route = Mock()
+        self.generator.begin(stops_per_address=2, verbose=False)
 
-        self.generator.begin(stops_per_address=1, verbose=False)
-        mock_get_distance.assert_called_once_with(addresses,
-                                                  self.generator.stops[0])
+        self.assertEqual(2, mock_process_stop.call_count)
 
-    def test_begin_inserts_api_results_into_db(self):
-        addresses = MapLocation(1, 1, 1)
-        self.generator.handler.get_address_generator = \
-            MagicMock(return_value=[addresses])
-
-        self.generator.stops = [MapLocation(2, 2, 2), MapLocation(3, 3, 3)]
-
-        self.generator._get_closest_locations = \
-            Mock(return_value=[self.generator.stops[0]])
-
-        self.generator.wrapper.get_distance_from_api = \
-            Mock(return_value={"distance": 6, "time": 9})
-
-        self.generator.handler.add_route = Mock()
-
-        self.generator.begin(stops_per_address=1, verbose=False)
-
-        self.generator.handler.add_route.assert_called_once_with(1, 2, 6, 9)
+        expected_calls = [mock.call(address, stops[0], False),
+                          mock.call(address, stops[1], False)]
+        self.assertEqual(expected_calls, mock_process_stop.call_args_list)
 
     @patch('DataGeneration.MapboxAPIWrapper.get_distance_from_api')
     def test_begin_doesnt_call_add_route_if_MapboxAPIError_occurs(self,
@@ -171,6 +154,31 @@ class test_DataGenerator(unittest.TestCase):
         self.generator.begin(stops_per_address=1, verbose=False)
 
         mock_add_route.assert_not_called()
+
+    # process_stop tests
+    def test_process_stop_calls_get_distance_from_api(self):
+        mock_get_distance = Mock(return_value={"distance": 6, "time": 9})
+        self.generator.wrapper.get_distance_from_api = mock_get_distance
+
+        self.generator.handler.add_route = Mock()
+
+        address = MapLocation(1, 1, 1)
+        stop = MapLocation(2, 2, 2)
+        self.generator.process_stop(address=address, stop=stop, verbose=False)
+
+        mock_get_distance.assert_called_once_with(address, stop)
+
+    def test_process_stop_calls_add_route(self):
+        self.generator.wrapper.get_distance_from_api = \
+            Mock(return_value={"distance": 6, "time": 9})
+
+        self.generator.handler.add_route = Mock()
+
+        self.generator.process_stop(address=MapLocation(3, 3, 3),
+                                    stop=MapLocation(4, 4, 4),
+                                    verbose=False)
+
+        self.generator.handler.add_route.assert_called_once_with(3, 4, 6, 9)
 
     # get_closest_locations tests
     def test_get_closest_locations_returns_closest_single_location_1(self):
