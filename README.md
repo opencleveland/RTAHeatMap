@@ -5,17 +5,18 @@ The purpose of this project is to generate walking distance data for a list of a
 
 ## Data Generation
 The DataGenerator class pulls addresses and stops from an sqlite3 database object, it then inserts generated route data into the same database object. The first step of generating data is to generate this object and populate the address and stops tables of this database.
-
+To use this package use the following import statement (assuming this directory is in your python path):
+```python
+from RTAHeatMap import *
+```
 ### Generating the database from scratch
 Insantiated a DatabaseHandler object while specifying the file path to the database you wish to create is sufficient to ensure that the database is created and that also has all necessary tables for RTAHeatMap to function.
 ```python
-from RTAHeatMap import *
 handler = DatabaseHandler(db='db.sqlite3')
 ```
 ### Populating the database
 Once we have our database object, we can populate it directly from a .csv file. We need to populate it with both addresses and stops for the DataGenerator to function. We only have to do this once, but you can always add more addresses or stops!
 ```python
-from RTAHeatMap import *
 handler = DatabaseHandler(db='db.sqlite3')
 handler.add_addresses_from_file(file_name='stops.csv')
 handler.add_stops_from_file(file_name='addresses.csv')
@@ -28,7 +29,6 @@ To generate data, we will need a .txt file which contains our API Key. You shoul
 ### Beginning Analysis
 Now you have everything that you need to start generating data. Ensure that your working directory is the same directory that contains the .txt file that contains your API key as well as the database object. Then simply run the following:
 ```python
-from RTAHeatMap import *
 generator = DataGenerator()
 generator.initialize(db='db.sqlite3', api_key='api_key.txt')
 generator.begin()
@@ -38,13 +38,11 @@ If everything has been setup correctly, you should start to see console output f
 ### Output
 Once you have generated data, you can use the following command to output routes to a .csv file:
 ```python
-from RTAHeatMap import *
 handler = DatabaseHandler(db='db.sqlite3')
 handler.output_routes(file_path='output.csv')
 ```
 Or, to output directly to a dataframe:
 ```python
-from RTAHeatMap import *
 import pandas as pd
 handler = DatabaseHandler(db='db.sqlite3')
 df = handler.routes_dataframe()
