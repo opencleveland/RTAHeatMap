@@ -5,6 +5,7 @@ The purpose of this project is to generate walking distance data for a list of a
 
 ## Data Generation
 The DataGenerator class pulls addresses and stops from an sqlite3 database object, it then inserts generated route data into the same database object. The first step of generating data is to generate this object and populate the address and stops tables of this database.
+
 To use this package use the following import statement (assuming this directory is in your python path):
 ```python
 from RTAHeatMap import *
