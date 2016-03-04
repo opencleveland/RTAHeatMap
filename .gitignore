@@ -2,6 +2,7 @@
 *.dbf
 *.zip
 *.sqlite3
+*.sqlite3-journal
 .idea/
 api_keys.txt
 api_key.txt
