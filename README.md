@@ -35,6 +35,21 @@ generator.begin()
 ```
 If everything has been setup correctly, you should start to see console output for each address and stop that is processed. It may take some time. The generated data will be added to the routes table of the sqlite database object.
 
+### Output
+Once you have generated data, you can use the following command to output routes to a .csv file:
+```python
+from RTAHeatMap import *
+handler = DatabaseHandler(db='db.sqlite3')
+handler.output_routes(file_path='output.csv')
+```
+Or, to output directly to a dataframe:
+```python
+from RTAHeatMap import *
+import pandas as pd
+handler = DatabaseHandler(db='db.sqlite3')
+df = handler.routes_dataframe()
+```
+
 ## HeatMap Generation
 This portion of the project is still in its infancy, please feel free to contribute!
 
