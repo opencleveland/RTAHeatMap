@@ -125,8 +125,11 @@ class DatabaseHandler:
         return [MapLocation(latitude=row[1], longitude=row[2], id=row[0])
                 for row in rows]
 
-    def output_routes(self, file_path):
-        return self.routes_dataframe().to_csv(file_path)
+    def output_routes(self, file_path, closest_stops_only=False):
+        if closest_stops_only:
+            return self.routes_dataframe_closest_stops().to_csv(file_path)
+        else:
+            return self.routes_dataframe().to_csv(file_path)
 
     def routes_dataframe(self):
         return pd.read_sql_query(

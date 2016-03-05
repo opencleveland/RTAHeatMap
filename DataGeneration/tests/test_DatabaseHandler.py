@@ -297,7 +297,7 @@ class TestDatabaseHandler(unittest.TestCase):
         self.assertEqual((3, -5), (stops[1].latitude, stops[1].longitude))
 
     # output_routes tests
-    def test_output_routes_outputs_single_route(self):
+    def test_output_routes_outputs_correctly_for_one_route(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         handler.initialize_db()
         handler.add_address(MapLocation(latitude=3, longitude=4, id=1))
@@ -321,6 +321,19 @@ class TestDatabaseHandler(unittest.TestCase):
                          'incorrect distance output')
         self.assertEqual(100, output.ix[0, 'time'],
                          'incorrect time output')
+
+    def test_output_routes_calls_correct_function_when_closest_stop_true(self):
+        handler = DatabaseHandler(full=False)
+
+        handler.routes_dataframe = Mock()
+        handler.routes_dataframe_closest_stops = Mock()
+
+        handler.output_routes(file_path="test_file.csv",
+                              closest_stops_only=True)
+
+        handler.routes_dataframe_closest_stops.assert_called_once_with()
+        self.assertEqual(0, handler.routes_dataframe.call_count,
+                         "routes_dataframe should not be called")
 
     # routes_dataframe tests
     def test_routes_dataframe_has_correct_values(self):
@@ -366,6 +379,7 @@ class TestDatabaseHandler(unittest.TestCase):
         self.assertEqual(13, df.ix[1, 'stop_latitude'],
                          'incorrect stop latitude output')
 
+    # routes_dataframe_closest_stops tests
     def test_routes_dataframe_closest_stops_returns_closest_stop(self):
         handler = DatabaseHandler('unit_test_db.sqlite3')
         handler.initialize_db()
