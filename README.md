@@ -47,6 +47,8 @@ Or, to output directly to a dataframe:
 import pandas as pd
 handler = DatabaseHandler(db='db.sqlite3')
 df = handler.routes_dataframe()
+# To get a dataframe of only the closest stop for each address:
+df = handler.routes_dataframe_closest_stops()
 ```
 
 ## HeatMap Generation
