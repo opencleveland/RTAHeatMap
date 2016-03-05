@@ -141,3 +141,21 @@ class DatabaseHandler:
             "LEFT JOIN addresses ON routes.address_id = addresses.id "
             "LEFT JOIN stops ON routes.stop_id = stops.id",
             self.conn)
+
+    def routes_dataframe_closest_stops(self):
+        """
+        Collects all routes and groups them by address. returns the nearest stop
+        to each address as well as the time and distance to that stop. Sorts by
+        distance.
+        """
+        df = self.routes_dataframe()
+        df_grouped = df.groupby(['address_latitude', 'address_longitude']).\
+            agg({'distance': 'min'})
+        df_grouped = df_grouped.reset_index()
+        df_grouped = df_grouped.rename(columns={'distance':'distance_min'})
+        df = pd.merge(df, df_grouped, how='left',
+                      on=['address_latitude', 'address_longitude'])
+        df = df[df['distance'] == df['distance_min']]
+        return df[['address_latitude', 'address_longitude',
+                   'stop_latitude', 'stop_longitude',
+                   'distance', 'time']].reset_index()

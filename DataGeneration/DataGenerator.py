@@ -68,7 +68,7 @@ class DataGenerator:
         handler = DatabaseHandler(db_file_name)
         return handler
 
-    def _get_api_wrapper(self, api_key_file = 'api_key.txt'):
+    def _get_api_wrapper(self, api_key_file='api_key.txt'):
         wrapper = MapboxAPIWrapper()
         wrapper.load_api_key_from_file(api_key_file)
         return wrapper

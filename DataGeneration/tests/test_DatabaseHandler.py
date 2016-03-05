@@ -365,3 +365,48 @@ class TestDatabaseHandler(unittest.TestCase):
                          'incorrect stop latitude output')
         self.assertEqual(13, df.ix[1, 'stop_latitude'],
                          'incorrect stop latitude output')
+
+    def test_routes_dataframe_closest_stops_returns_closest_stop(self):
+        handler = DatabaseHandler('unit_test_db.sqlite3')
+        handler.initialize_db()
+        handler.add_address(MapLocation(latitude=1, longitude=1, id=1))
+        handler.add_stop(MapLocation(latitude=2, longitude=2, id=2))
+        handler.add_stop(MapLocation(latitude=3, longitude=3, id=3))
+        handler.add_route(address=1, stop=2, distance=100, time=100)
+        handler.add_route(address=1, stop=3, distance=50, time=50)
+        df = handler.routes_dataframe_closest_stops()
+        self.assertEqual(1, df.shape[0], "should be 1 output row")
+        self.assertEqual(1, df.ix[0, 'address_latitude'],
+                         'address should have latitude of 1')
+        self.assertEqual(1, df.ix[0, 'address_longitude'],
+                         'address should have longitude of 1')
+        self.assertEqual(3, df.ix[0, 'stop_latitude'],
+                         'the stop with latitude of 3 should have been '
+                         'returned since it had the smallest distance')
+        self.assertEqual(3, df.ix[0, 'stop_longitude'],
+                         'the stop with longitude of 3 should have been '
+                         'returned since it had the smallest distance')
+        self.assertEqual(50, df.ix[0, 'distance'],
+                         "the route with the lowest distance should be"
+                         "returned in the output dataframe")
+        self.assertEqual(50, df.ix[0, 'time'],
+                         "the route the with lowest distance's time should be"
+                         "returned in the output dataframe")
+
+    def test_routes_dataframe_closest_stops_returns_for_many_addresses(self):
+        handler = DatabaseHandler('unit_test_db.sqlite3')
+        handler.initialize_db()
+        handler.add_address(MapLocation(latitude=1, longitude=1, id=1))
+        handler.add_address(MapLocation(latitude=11, longitude=10, id=11))
+        handler.add_stop(MapLocation(latitude=2, longitude=2, id=2))
+        handler.add_stop(MapLocation(latitude=12, longitude=12, id=12))
+        handler.add_route(address=1, stop=2, distance=1, time=1)
+        handler.add_route(address=1, stop=12, distance=11, time=11)
+        handler.add_route(address=11, stop=2, distance=9, time=9)
+        handler.add_route(address=11, stop=12, distance=1, time=1)
+        df = handler.routes_dataframe_closest_stops()
+        self.assertEqual(2, df.shape[0], "should be 2 output rows since "
+                                         "there are 2 addresses with routes")
+        self.assertEqual(1, df.ix[0, 'distance'],
+                         "distance for the first row should be 1 "
+                         "since that is the shortest route distance")
