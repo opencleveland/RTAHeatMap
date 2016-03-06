@@ -18,8 +18,8 @@ class DataGenerator:
         stops from the database, and initializes the API wrapper.
 
         Args:
-        db (str): File path to the sqlite3 database.
-        api_key (str): File path to a text file containing an API key.
+            db (str): File path to the sqlite3 database.
+            api_key (str): File path to a text file containing an API key.
         """
         self.handler = self._get_database_handler(db)
         self.stops = self.handler.get_all_stops()
@@ -32,9 +32,10 @@ class DataGenerator:
         in the routes table of the database.
 
         Args:
-        stops_per_address (int): Number of stops per address used to query the
-            api for walking distance. The stops selected are the closest stops
-            to the address by straight line distance. Default value is 5.
+            stops_per_address (int): Number of stops per address used to query
+                the api for walking distance. The stops selected are the closest
+                stops to the address by straight line distance. Default value is
+                5.
         """
         address_generator = self.handler.get_address_generator(verbose=verbose)
         for address in address_generator:

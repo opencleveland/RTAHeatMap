@@ -126,12 +126,41 @@ class DatabaseHandler:
                 for row in rows]
 
     def output_routes(self, file_path, closest_stops_only=False):
+        """
+
+        Args:
+            file_path (str): the file path to save the .csv output
+            closest_stops_only (bool): If true, only save the stops that are the
+                closest (by the distance column) to each address. If there are
+                multiple stops per address that have the same distance, both are
+                returned.
+        Returns:
+            A pandas DataFrame with the following columns:
+                address_latitude
+                address_longitude
+                stop_latitude
+                stop_longitude
+                distance
+                time
+            This dataframe contains each route in the database that has been
+            collected by the begin() function of the DataGenerator class. If the
+            closest_stops_only parameter is set to true, then the output only
+            contains stops for each address which are equal to minimum distance
+            for routes associated with specific addresses. This means that it
+            can return multiple stops per address if their associated routes
+            have equal distances.
+        """
         if closest_stops_only:
             return self.routes_dataframe_closest_stops().to_csv(file_path)
         else:
             return self.routes_dataframe().to_csv(file_path)
 
     def routes_dataframe(self):
+        """
+        Returns:
+            all routes along with the stop and address latitudes and longitudes
+            as a pandas DataFrame.
+        """
         return pd.read_sql_query(
             "SELECT "
             "addresses.latitude AS address_latitude,"
@@ -147,7 +176,7 @@ class DatabaseHandler:
 
     def routes_dataframe_closest_stops(self):
         """
-        Collects all routes and groups them by address. returns the nearest stop
+        Collects all routes and groups them by address. Returns the nearest stop
         to each address as well as the time and distance to that stop. Sorts by
         distance.
         """
