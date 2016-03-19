@@ -10,7 +10,9 @@ from mock import Mock, patch, MagicMock, mock
 class test_DataGenerator(unittest.TestCase):
 
     def setUp(self):
-        self.generator = DataGenerator()
+        self.generator = DataGenerator(handler=DatabaseHandler(full=False),
+                                       stops=[],
+                                       wrapper=MapboxAPIWrapper())
 
     # __init__ tests
     def test_DataGenerator_exists(self):
@@ -24,6 +26,7 @@ class test_DataGenerator(unittest.TestCase):
 
     def test_constructor_sets_wrapper_instance_variable(self):
         self.assertIsInstance(self.generator.wrapper, MapboxAPIWrapper)
+
 
     # initialize tests
     def test_initialize_initializes_database(self):
@@ -183,48 +186,44 @@ class test_DataGenerator(unittest.TestCase):
 
     # get_closest_locations tests
     def test_get_closest_locations_returns_closest_single_location_1(self):
-        generator = DataGenerator()
         stops = [MapLocation(1, 1, 1),
                  MapLocation(2, 2, 2)]
         address = MapLocation(0, 0, 0)
-        closest_stops = generator._get_closest_locations(source=address,
-                                                         destinations=stops,
-                                                         n=1)
-        self.assertEqual(MapLocation(1, 1, 1), closest_stops[0],
-                         "{}, should be 1, 1".format(closest_stops[0]))
+        closest = self.generator._get_closest_locations(source=address,
+                                                        destinations=stops,
+                                                        n=1)
+        self.assertEqual(MapLocation(1, 1, 1), closest[0],
+                         "{}, should be 1, 1".format(closest[0]))
 
     def test_get_closest_locations_returns_closest_single_location_2(self):
-        generator = DataGenerator()
         stops = [MapLocation(3, 3, 3),
                  MapLocation(4, 4, 4)]
         address = MapLocation(5, 5, 5)
-        closest_stops = generator._get_closest_locations(source=address,
-                                                         destinations=stops,
-                                                         n=1)
-        self.assertEqual(MapLocation(4, 4, 4), closest_stops[0],
-                         "{}, should be 4, 4".format(closest_stops[0]))
+        closest = self.generator._get_closest_locations(source=address,
+                                                        destinations=stops,
+                                                        n=1)
+        self.assertEqual(MapLocation(4, 4, 4), closest[0],
+                         "{}, should be 4, 4".format(closest[0]))
 
     def test_get_closest_locations_returns_closest_2_locations(self):
-        generator = DataGenerator()
         stops = [MapLocation(1, 1, 1),
                  MapLocation(5, 5, 5),
                  MapLocation(6, 6, 6)]
         address = MapLocation(4, 4, 4)
-        closest_stops = generator._get_closest_locations(source=address,
-                                                         destinations=stops,
-                                                         n=2)
-        self.assertEqual(MapLocation(5, 5, 5), closest_stops[0],
-                         "{}, should be 5, 5".format(closest_stops[0]))
-        self.assertEqual(MapLocation(6, 6, 6), closest_stops[1],
-                         "{}, should be 6, 6".format(closest_stops[1]))
+        closest = self.generator._get_closest_locations(source=address,
+                                                        destinations=stops,
+                                                        n=2)
+        self.assertEqual(MapLocation(5, 5, 5), closest[0],
+                         "{}, should be 5, 5".format(closest[0]))
+        self.assertEqual(MapLocation(6, 6, 6), closest[1],
+                         "{}, should be 6, 6".format(closest[1]))
 
     def test_get_closest_locations_returns_location_when_equal(self):
-        generator = DataGenerator()
         stops = [MapLocation(1, 1, 1),
                  MapLocation(3, 3, 3)]
         address = MapLocation(2, 2, 2)
-        closest_stops = generator._get_closest_locations(source=address,
-                                                         destinations=stops,
-                                                         n=1)
-        self.assertEqual(MapLocation(1, 1, 1), closest_stops[0],
-                         "{}, should be 1, 1".format(closest_stops[0]))
+        closest = self.generator._get_closest_locations(source=address,
+                                                        destinations=stops,
+                                                        n=1)
+        self.assertEqual(MapLocation(1, 1, 1), closest[0],
+                         "{}, should be 1, 1".format(closest[0]))
