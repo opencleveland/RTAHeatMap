@@ -7,10 +7,13 @@ import requests
 
 class DataGenerator:
 
-    def __init__(self):
-        self.stops = []
-        self.handler = DatabaseHandler(full=False)
-        self.wrapper = MapboxAPIWrapper()
+    def __init__(self,
+                 stops=[],
+                 handler=DatabaseHandler(full=False),
+                 wrapper=MapboxAPIWrapper()):
+        self.stops = stops
+        self.handler = handler
+        self.wrapper = wrapper
 
     def initialize(self, db='db.sqlite3', api_key='api_key.txt'):
         """

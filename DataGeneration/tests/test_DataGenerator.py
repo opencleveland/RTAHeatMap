@@ -133,12 +133,12 @@ class test_DataGenerator(unittest.TestCase):
                           mock.call(address, stops[1], False)]
         self.assertEqual(expected_calls, mock_process_stop.call_args_list)
 
-    @patch('DataGeneration.MapboxAPIWrapper.get_distance_from_api')
-    def test_begin_doesnt_call_add_route_if_MapboxAPIError_occurs(self,
-                                                                  mock_api):
+    def test_begin_doesnt_call_add_route_if_MapboxAPIError_occurs(self):
         addresses = MapLocation(1, 1, 1)
         self.generator.handler.get_address_generator = \
             MagicMock(return_value=[addresses])
+
+        self.generator.wrapper.get_distance_from_api = Mock()
 
         self.generator.stops = [MapLocation(2, 2, 2)]
 
@@ -146,7 +146,8 @@ class test_DataGenerator(unittest.TestCase):
             Mock(return_value=[self.generator.stops[0]])
 
         # force get_distance_from_api to raise a MapboxAPIError exception
-        mock_api.side_effect = MapboxAPIError("API Error")
+        self.generator.wrapper.get_distance_from_api.\
+            side_effect = MapboxAPIError("API Error")
 
         mock_add_route = Mock()
         self.generator.handler.add_route = mock_add_route
