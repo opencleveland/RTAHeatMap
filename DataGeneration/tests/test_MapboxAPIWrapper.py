@@ -242,7 +242,19 @@ class TestMapboxAPIWrapper(unittest.TestCase):
 
         self.wrapper.get_distance_from_api(origin, destination)
         self.wrapper._construct_request_string.\
-            assert_called_once_with(origin, destination)
+            assert_called_once_with(origin, destination, 'walking')
+
+    def test_get_distance_from_api_passes_in_mode_string(self):
+        self.wrapper._construct_request_string = Mock(return_value='request')
+        self.wrapper._call_api = Mock(return_value=[])
+        self.wrapper._parse_response = Mock()
+
+        origin = MapLocation(1, 1, 1)
+        destination = MapLocation(2, 2, 2)
+
+        self.wrapper.get_distance_from_api(origin, destination, mode='driving')
+        self.wrapper._construct_request_string. \
+            assert_called_once_with(origin, destination, 'driving')
 
     def test_get_distance_from_api_calls_make_api_call(self):
         self.wrapper._construct_request_string = Mock(return_value='request')
@@ -260,6 +272,7 @@ class TestMapboxAPIWrapper(unittest.TestCase):
         dist = self.wrapper.get_distance_from_api(MapLocation(), MapLocation())
         self.wrapper._parse_response.assert_called_once_with("json")
         self.assertEqual([5, 10], dist)
+
 
     # _parse_response tests
     def test_parse_response_returns_tuple(self):

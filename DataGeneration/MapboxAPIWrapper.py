@@ -12,8 +12,10 @@ class MapboxAPIWrapper:
         with open(filename) as key_file:
             self.key = key_file.read()
 
-    def get_distance_from_api(self, origin, destination):
-        request_string = self._construct_request_string(origin, destination)
+    def get_distance_from_api(self, origin, destination, mode='walking'):
+        request_string = self._construct_request_string(origin,
+                                                        destination,
+                                                        mode)
         return self._parse_response(self._call_api(request_string))
 
     def _construct_request_string(self, origin, destination, mode='walking'):
