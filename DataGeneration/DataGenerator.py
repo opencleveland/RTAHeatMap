@@ -34,7 +34,7 @@ class DataGenerator:
         self.stops = self.handler.get_all_stops()
         self.wrapper = self._get_api_wrapper(api_key)
 
-    def begin(self, stops_per_address=5, verbose=True):
+    def begin(self, stops_per_address=5, verbose=True, mode='walking'):
         """
         Begins collection of distances to closest stops from each address.
         Stores each address-stop pair and associated walking distance and time
@@ -56,16 +56,16 @@ class DataGenerator:
                                                         n=stops_per_address)
             for stop in closest_stops:
                 try:
-                    self.process_stop(address, stop, verbose)
+                    self.process_stop(address, stop, verbose, mode)
                 except requests.exceptions.RequestException as e:
                     print('error processing stop: {}'.format(e.message))
                     continue
 
-    def process_stop(self, address, stop, verbose):
+    def process_stop(self, address, stop, verbose, mode='walking'):
         if verbose:
             print('processing stop: {}, {}, id: {}'.
                   format(stop.latitude, stop.longitude, stop.id))
-        result = self.wrapper.get_distance_from_api(address, stop)
+        result = self.wrapper.get_distance_from_api(address, stop, mode)
         if verbose:
             print('distance: {}, time: {}'.format(result["distance"],
                                                   result["time"]))

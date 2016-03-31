@@ -131,8 +131,29 @@ class test_DataGenerator(unittest.TestCase):
 
         self.assertEqual(2, mock_process_stop.call_count)
 
-        expected_calls = [mock.call(address, stops[0], False),
-                          mock.call(address, stops[1], False)]
+        expected_calls = [mock.call(address, stops[0], False, 'walking'),
+                          mock.call(address, stops[1], False, 'walking')]
+        self.assertEqual(expected_calls, mock_process_stop.call_args_list)
+
+    def test_begin_calls_process_stop_for_each_stop_with_mode(self):
+        address = MapLocation(1, 1, 1)
+        self.generator.handler.get_address_generator = \
+            MagicMock(return_value=[address])
+
+        stops = [MapLocation(2, 2, 2), MapLocation(3, 3, 3)]
+
+        mock_get_closest_locations = Mock(return_value=stops)
+        self.generator._get_closest_locations = mock_get_closest_locations
+
+        mock_process_stop = Mock()
+        self.generator.process_stop = mock_process_stop
+
+        self.generator.begin(stops_per_address=2, verbose=False, mode='driving')
+
+        self.assertEqual(2, mock_process_stop.call_count)
+
+        expected_calls = [mock.call(address, stops[0], False, 'driving'),
+                          mock.call(address, stops[1], False, 'driving')]
         self.assertEqual(expected_calls, mock_process_stop.call_args_list)
 
     def test_begin_doesnt_call_add_route_if_MapboxAPIError_occurs(self):
@@ -169,7 +190,20 @@ class test_DataGenerator(unittest.TestCase):
         stop = MapLocation(2, 2, 2)
         self.generator.process_stop(address=address, stop=stop, verbose=False)
 
-        mock_get_distance.assert_called_once_with(address, stop)
+        mock_get_distance.assert_called_once_with(address, stop, 'walking')
+
+    def test_process_stop_calls_get_distance_from_api_with_mode(self):
+        mock_get_distance = Mock(return_value={"distance": 6, "time": 9})
+        self.generator.wrapper.get_distance_from_api = mock_get_distance
+
+        self.generator.handler.add_route = Mock()
+
+        address = MapLocation(1, 1, 1)
+        stop = MapLocation(2, 2, 2)
+        self.generator.process_stop(address=address, stop=stop,
+                                    verbose=False, mode='driving')
+
+        mock_get_distance.assert_called_once_with(address, stop, 'driving')
 
     def test_process_stop_calls_add_route(self):
         self.generator.wrapper.get_distance_from_api = \
