@@ -27,7 +27,6 @@ class test_DataGenerator(unittest.TestCase):
     def test_constructor_sets_wrapper_instance_variable(self):
         self.assertIsInstance(self.generator.wrapper, MapboxAPIWrapper)
 
-
     # initialize tests
     def test_initialize_initializes_database(self):
         self.generator._get_database_handler = Mock()

@@ -121,6 +121,20 @@ class TestMapboxAPIWrapper(unittest.TestCase):
                                                                destination),
                          'incorrect request string returned')
 
+    def test_construct_request_string_can_use_driving_mode(self):
+        origin = MapLocation(latitude=50.032, longitude=40.54453)
+        destination = MapLocation(latitude=51.0345, longitude=41.2314)
+        self.wrapper.key = 'api_key'
+        self.assertEqual('https://api.mapbox.com/v4/directions/mapbox.driving/'
+                         '40.54453,50.032;41.2314,51.0345.json?alternatives='
+                         'false&instructions=text&geometry=false&steps=false&&'
+                         'access_token=api_key',
+                         self.wrapper._construct_request_string(origin,
+                                                                destination,
+                                                                mode='driving'),
+                         'incorrect request string returned')
+
+
     # make_api_call tests
     @patch('MapboxAPIWrapper.requests.get')
     def test_call_api_calls_requests_get(self, mock_get):

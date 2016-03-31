@@ -16,10 +16,11 @@ class MapboxAPIWrapper:
         request_string = self._construct_request_string(origin, destination)
         return self._parse_response(self._call_api(request_string))
 
-    def _construct_request_string(self, origin, destination):
-        request_string = 'https://api.mapbox.com/v4/directions/mapbox.walking/'
+    def _construct_request_string(self, origin, destination, mode='walking'):
         if self.key == "":
             raise UnboundLocalError('key has not been specified')
+        request_string = 'https://api.mapbox.com/v4/directions/mapbox.'
+        request_string += mode + '/'
         request_string += str(origin.longitude) + ','
         request_string += str(origin.latitude) + ';'
         request_string += str(destination.longitude) + ','
