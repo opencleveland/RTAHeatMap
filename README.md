@@ -31,10 +31,23 @@ To generate data, we will need a .txt file which contains our API Key. You shoul
 Now you have everything that you need to start generating data. Ensure that your working directory is the same directory that contains the .txt file that contains your API key as well as the database object. Then simply run the following:
 ```python
 generator = DataGenerator()
-generator.initialize(db='db.sqlite3', api_key='api_key.txt')
 generator.begin()
 ```
+
+The default location for the database file is 'db.sqlite3' and the default location for the api key is 'api_key.txt' in the same folder that you run the analysis from.
+If you'd like to specify an alternative location for the database or the api key file run the following line before generator.begin():
+```python
+generator.initialize(db='your_db.sqlite3', api_key='my_api_key.txt')
+```
+
 If everything has been setup correctly, you should start to see console output for each address and stop that is processed. It may take some time. The generated data will be added to the routes table of the sqlite database object.
+
+The default mode of transportation when DataGenerator.begin() is called is walking. You can also specify driving or cycling by invoking begin with the mode parameter like so:
+```python
+generator.begin(mode='driving')
+# OR
+generator.begin(mode='cycling')
+```
 
 ### Output
 Once you have generated data, you can use the following command to output routes to a .csv file:
