@@ -45,6 +45,12 @@ class DataGenerator:
                 the api for walking distance. The stops selected are the closest
                 stops to the address by straight line distance. Default value is
                 5.
+            verbose (bool): If True (default), displays status information
+                during data collection.
+            mode (str): Mode of travel to query against the api. Options are:
+                'walking' (default) - Walking on foot
+                'driving' - Driving by car
+                'cycling' - Cycling by bicycle
         """
         address_generator = self.handler.get_address_generator(verbose=verbose)
         for address in address_generator:
