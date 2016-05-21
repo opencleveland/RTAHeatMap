@@ -3,6 +3,19 @@
 ## Purpose
 The purpose of this project is to generate walking distance data for a list of address to the nearest public transportation stops and then represent this data as a heatmap.
 
+
+## Set Up 
+
+Our project is currently using python 2.7 
+
+1. Install [pip and virtualenv](https://github.com/codeforamerica/howto/blob/master/Python-Virtualenv.md) if you haven't already. (virtualenvwrapper is not needed)
+2. Clone the directory 
+3. Go inside the RTAheatmap project folder
+4. Create virtualenv for this project ```virtualenv --no-site-packages venv```
+5. start your virtualenv by running ```source venv/bin/activate```
+4. run ```pip install -r requirements.txt```
+
+
 ## Data Generation
 The DataGenerator class pulls addresses and stops from an sqlite3 database object, it then inserts generated route data into the same database object. The first step of generating data is to generate this object and populate the address and stops tables of this database.
 
@@ -82,4 +95,4 @@ To contribute to this project:
 
 
 If you have questions about the project or need help setting it up, Open an issue or 
-email opencleveland@gmail.com 
+email opencleveland@gmail.com
