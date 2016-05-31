@@ -127,7 +127,7 @@ class DatabaseHandler:
         c.execute("SELECT * from stops")
         rows = c.fetchall()
         c.close()
-        return [MapLocation(latitude=row[1], longitude=row[2], id=row[0])
+        return [MapLocation(latitude=row[3], longitude=row[4], id=row[0])
                 for row in rows]
 
     def output_routes(self, file_path, closest_stops_only=False):
