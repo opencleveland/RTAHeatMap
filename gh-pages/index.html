@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v1.0.0-rc.1/leaflet.css" />
+<script src="http://cdn.leafletjs.com/leaflet/v1.0.0-rc.1/leaflet.js"></script>
+    </head>
+<body>
+
+    <div id="mapid" style="width: 100%; height: 600px; border: 1px solid #ccc;"></div>
+
+        <script>
+                    
+                var basemap = new L.TileLayer('http://{s}.tiles.mapbox.com/v3/skorasaurus.5eb85050/{z}/{x}/{y}.png', {maxZoom: 18});
+                var latlng = new L.LatLng(41.501860,-81.635799);
+                
+                var themap = new L.Map('mapid', {center: latlng, zoom: 10, layers: [basemap]});
+                
+    
+            </script>
+        
+        
+
+</div>
+</body>
+</html>
