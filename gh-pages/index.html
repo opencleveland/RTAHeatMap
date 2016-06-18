@@ -9,15 +9,15 @@
     </head>
 <body>
 
-    <div id="mapid" style="width: 100%; height: 600px; border: 1px solid #ccc;"></div>
+    <div id="mapid" style="width: 80%; height: 600px; border: 1px solid #ccc;"></div>
 
         <script>
 
 
-        var basemap = new L.TileLayer('http://{s}.tiles.mapbox.com/v3/skorasaurus.e5ff1f07/{z}/{x}/{y}.png', {maxZoom: 18});
-                var latlng = new L.LatLng(41.501860,-81.635799);
+        var basemap = new L.TileLayer('http://{s}.tiles.mapbox.com/v3/skorasaurus.e5ff1f07/{z}/{x}/{y}.png', {maxZoom: 20});
+                var latlng = new L.LatLng(41.4118,-81.71);
                 
-                var themap = new L.Map('mapid', {center: latlng, zoom: 10, layers: [basemap]});
+                var themap = new L.Map('mapid', {center: latlng, zoom: 10.5, layers: [basemap]});
 
 
         function t3hStyle(thefeature) {
