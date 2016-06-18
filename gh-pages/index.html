@@ -20,32 +20,45 @@
                 var themap = new L.Map('mapid', {center: latlng, zoom: 10, layers: [basemap]});
 
 
-        function t3hstyle(thefeature) {
-                return {
-                    weight: 2,
+        function t3hStyle(thefeature) {
+                return { 
+                    stroke: false, 
+                    weight: 1.02,
                     opacity: 0.54,
-                    color: 'gray',
+                    // color: 'gray',
                     // fillColor: '#800026',
-                    fillColor: getfillcolor(thefeature.properties.index), 
+                    fillColor: getFillColor(thefeature.properties.index), 
                     fillOpacity: 0.7
                 }
            }
 
-       function getfillcolor(deez) {
-                return 
-                  deez = 0 ? '#800026' :
-                  deez = 1 ? '#BD0026' :
-                  deez = 2 ? '#E31A1C' :
-                  deez = 3 ? '#FC4E2A' :
-                  deez = 4 ? '#FD8D3C' :
-                  '#FEB24C'; 
+       
+       function getFillColor(deez) {
+                var returnedColor; 
+                  if (deez === 0) {
+                    returnedColor = '#e6e2ed'; 
+                  }
+                  else if (deez === 1) {
+                    returnedColor = '#ced5e8'; 
+                  }
+                  else if (deez === 2) {
+                    returnedColor = '#a4bedb'; 
+                  }
+                  else if (deez === 3) {
+                    returnedColor = '#4395c3'; 
+                  }
+                  else if (deez === 4) {
+                    returnedColor = '#1d7bad'; 
+                  }
+                  else returnedColor = '#045a8d'
+                  return returnedColor
        }
 
 
               // for others to get a brief update of why I'm using jquery see http://lyzidiamond.com/posts/external-geojson-and-leaflet-the-other-way      
     $.getJSON("contours-v7-simplified5.geojson", function(data) {
         var thegeojson = L.geoJson(data, {
-            style: t3hstyle,
+            style: t3hStyle,
             onEachFeature: function (tefeature, telayer) {
               telayer.bindPopup("this is in the" + tefeature.properties.index + " quintile")
               }
