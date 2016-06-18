@@ -3,7 +3,8 @@
     <head>
         <meta charset="utf-8" />
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v1.0.0-rc.1/leaflet.css" />
-<script src="http://cdn.leafletjs.com/leaflet/v1.0.0-rc.1/leaflet.js"></script>
+<script src="http://cdn.leafletjs.com/leaflet/v1.0.0-rc.1/leaflet.js"></script> 
+
   <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
     </head>
 <body>
@@ -19,6 +20,17 @@
                 var themap = new L.Map('mapid', {center: latlng, zoom: 10, layers: [basemap]});
 
 
+        function t3hstyle(feature) {
+                return {
+                    weight: 2,
+                    opacity: 0.54,
+                    color: 'black',
+                    // fillColor: '#800026',
+                    fillColor: getfillcolor(feature.properties.index), 
+                    fillOpacity: 0.7,
+                }
+           }
+
        function getfillcolor(deez) {
                 return 
                    deez = 0 ? '#800026' :
@@ -29,39 +41,20 @@
                    '#FEB24C'; 
        }
 
-       function t3hstyle(feature) {
-                return {
-                    weight: 2,
-                    opacity: 0.54,
-                    color: 'black',
-                  //  fillColor: getfillcolor(feature.property.index), 
-                    fillOpacity: 0.7,
-                }
-        }
-
-
-
 
               // for others to get a brief update of why I'm using jquery see http://lyzidiamond.com/posts/external-geojson-and-leaflet-the-other-way      
     $.getJSON("contours-v7-simplified5.geojson", function(data) {
         var thegeojson = L.geoJson(data, {
-            style: t3hstyle,
-
-    }) 
-    thegeojson.addTo(themap);    
-    });
-
-        // deez is a distinct variable that I made just for this function
-
-
-    
- /*   fillopacity: 0.78; 
-
-   var myfillcolor = function ( )
+            style: t3hstyle
+        }); //.bindPopup(function (layer) {
+    // return layer.feature.properties.index;
+    thegeojson.addTo(themap);  
+    })
+      
 
 
-                 */
-    
+
+
             </script>
         
         
