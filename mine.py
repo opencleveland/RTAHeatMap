@@ -15,4 +15,4 @@ handler.add_stops_from_file(file_name='sparse_stops.csv')
 
 generator = DataGenerator()
 generator.begin()
-generator.initialize(db='db.sqlite3', api_key='api_key.txt')
+generator.initialize(db='db.sqlite3', api_key='my_api_key.txt')
