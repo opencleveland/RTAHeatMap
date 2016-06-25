@@ -5,13 +5,37 @@
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v1.0.0-rc.1/leaflet.css" />
 <script src="http://cdn.leafletjs.com/leaflet/v1.0.0-rc.1/leaflet.js"></script> 
 
+<style> 
+.info {
+    padding: 6px 8px;
+    font: 14px/16px Arial, Helvetica, sans-serif;
+    background: white;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+}
+
+.legend {
+  text-align: left;
+  line-height: 18px;
+  color: #555;
+}
+.legend i {
+  width: 18px;
+  height: 18px;
+  float: left;
+  margin-right: 8px;
+  opacity: 0.7;
+}
+
+</style> 
+   </head>
   <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
-    </head>
+ 
 <body>
+ <div id="mapid" style="width: 80%; height: 600px; border: 1px solid #ccc;"></div>
 
-    <div id="mapid" style="width: 80%; height: 600px; border: 1px solid #ccc;"></div>
-
-        <script>
+<script>
 
 
         var basemap = new L.TileLayer('http://{s}.tiles.mapbox.com/v3/skorasaurus.e5ff1f07/{z}/{x}/{y}.png', {maxZoom: 20});
@@ -30,29 +54,27 @@
                     fillColor: getFillColor(thefeature.properties.index), 
                     fillOpacity: 0.7
                 }
-           }
+        }
 
        
        function getFillColor(deez) {
-                var returnedColor; 
                   if (deez === 0) {
-                    returnedColor = '#e6e2ed'; 
+                    return '#e6e2ed'; 
                   }
                   else if (deez === 1) {
-                    returnedColor = '#ced5e8'; 
+                    return '#ced5e8'; 
                   }
                   else if (deez === 2) {
-                    returnedColor = '#a4bedb'; 
+                    return '#a4bedb'; 
                   }
                   else if (deez === 3) {
-                    returnedColor = '#4395c3'; 
+                    return '#4395c3'; 
                   }
                   else if (deez === 4) {
-                    returnedColor = '#1d7bad'; 
+                    return '#1d7bad'; 
                   }
-                  else returnedColor = '#045a8d'
-                  return returnedColor
-       }
+                  return '#045a8d'
+        }           
 
 
               // for others to get a brief update of why I'm using jquery see http://lyzidiamond.com/posts/external-geojson-and-leaflet-the-other-way      
@@ -67,13 +89,35 @@
     })
       
 
+  var thelegend = L.control({position: 'bottomright'});
+     
 
+ thelegend.onAdd = function (map) {
+
+      var div = L.DomUtil.create('div', 'info legend'),
+        grades = [0, 10, 20, 50, 100, 200, 500, 1000],
+        labels = [],
+        from, to;
+
+      for (var i = 0; i < grades.length; i++) {
+        from = grades[i];
+        to = grades[i + 1];
+
+        labels.push(
+          '<i style="background:' + getFillColor(from + 1) + '"></i> ' +
+          from + (to ? '&ndash;' + to : '+'));
+      }
+
+      div.innerHTML = labels.join('<br>');
+      return div;
+  };
+
+thelegend.addTo(themap);
 
 
             </script>
         
         
 
-</div>
 </body>
 </html>
