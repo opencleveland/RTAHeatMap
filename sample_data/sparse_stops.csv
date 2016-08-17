@@ -1,4 +1,4 @@
-stop_id,stop_name,latitude,longitude
+id,stop_name,latitude,longitude
 00001,COLUMBUS ST & BROADWAY,  41.392864, -81.536557
 00002,10800 BROOKPARK RD (HOME DEPOT),  41.418556, -81.760788
 00004,EUCLID AV & E 101ST ST,  41.503712, -81.617399
