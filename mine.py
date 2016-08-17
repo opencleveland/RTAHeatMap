@@ -10,8 +10,8 @@ from DataGeneration.DataGenerator import DataGenerator
 # I modified this from the instructions
 handler = DatabaseHandler('db.sqlite3')
 
-handler.add_addresses_from_file(file_name='sparse_addresses.csv')
-handler.add_stops_from_file(file_name='sparse_stops.csv') 
+handler.add_addresses_from_file(file_name='sample_data/sparse_addresses.csv')
+handler.add_stops_from_file(file_name='sample_data/sparse_stops.csv') 
 
 generator = DataGenerator()
 generator.begin()
