@@ -13,7 +13,7 @@ class DataGenerator:
                  wrapper=None):
         self.handler = handler
         if stops is None:
-            stops = handler.get_all_stops()
+            self.stops = handler.get_all_stops()
         else:
             self.stops = stops
         if wrapper is None:
