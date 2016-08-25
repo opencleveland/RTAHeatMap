@@ -61,7 +61,7 @@ class DatabaseHandler:
 
     def add_stops_from_file(self, file_name):
         df = pd.read_csv(file_name)
-        df = df[["id", "longitude", "latitude"]]
+        df = df[["longitude", "latitude"]]
         df.to_sql('stops', self.conn, if_exists='append', index=False)
 
     def add_address(self, location):
