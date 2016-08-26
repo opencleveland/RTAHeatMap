@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import sqlite3 as sql
 import pandas as pd
 from DataGeneration.MapLocation import MapLocation
@@ -31,6 +34,8 @@ class DatabaseHandler:
         c.execute("""
                   CREATE TABLE IF NOT EXISTS stops
                   (id INTEGER PRIMARY KEY,
+                  stop_id INTEGER NOT NULL,
+                  stop_name text NOT NULL, 
                   latitude real NOT NULL,
                   longitude real NOT NULL)
                   """)
@@ -56,6 +61,7 @@ class DatabaseHandler:
 
     def add_stops_from_file(self, file_name):
         df = pd.read_csv(file_name)
+        df = df[["longitude", "latitude"]]
         df.to_sql('stops', self.conn, if_exists='append', index=False)
 
     def add_address(self, location):
