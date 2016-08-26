@@ -16,7 +16,9 @@ Our project is currently using python 2.7
 6. run ```pip install -r requirements.txt```
 
 
-To create the , 
+To create the results, run generate.py. 
+
+Below describes generate.py 
 
 
 ## Data Generation
