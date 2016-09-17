@@ -61,7 +61,6 @@ class DatabaseHandler:
 
     def add_stops_from_file(self, file_name):
         df = pd.read_csv(file_name)
-        df = df[["longitude", "latitude"]]
         df.to_sql('stops', self.conn, if_exists='append', index=False)
 
     def add_address(self, location):
@@ -128,7 +127,8 @@ class DatabaseHandler:
         c.execute("SELECT * from stops")
         rows = c.fetchall()
         c.close()
-        return [MapLocation(latitude=row[1], longitude=row[2], id=row[0])
+        print rows[0]
+        return [MapLocation(latitude=row[3], longitude=row[4], id=row[0])
                 for row in rows]
 
     def output_routes(self, file_path, closest_stops_only=False):
