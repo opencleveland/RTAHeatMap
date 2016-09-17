@@ -14,7 +14,7 @@ Our project is currently using python 2.7
 4. Create virtualenv for this project ```virtualenv --no-site-packages venv```
 5. start your virtualenv by running ```source venv/bin/activate```
 6. run ```pip install -r requirements.txt```
-
+7. Sign up for an account at mapbox.com; obtain an API key. create a file named api_key.txt and place the api key in it and save. r ask RTAtracker channel in our slack. 
 
 To create the results, run generate.py. 
 
