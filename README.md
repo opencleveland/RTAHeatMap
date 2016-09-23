@@ -80,6 +80,30 @@ df = handler.routes_dataframe_closest_stops()
 ```
 
 ## HeatMap 
+
+Your output from generate.py is now a CSV file (let's call it theresults.csv) with 3 columns, the latitude, longitude, and the walking_time column 
+(in seconds) that it takes to the closest transit stop. 
+
+First, we need to transform that CSV file into a geojson file. There are numerous ways to do this but 
+in our tutorial, we will use [csv2geojson](https://github.com/mapbox/csv2geojson) and the result geojson file will be theresults.geojson. 
+
+Now, we have a geojson file (theresults.geojson) but walking_time's values are as strings instead of an integer! So, we need to remove the strings (```"``) from the walking_time's values. 
+
+We'll need to do a search for the string ```"-?([0-9]+\.?[0-9]+)"``` and replace it with ```$1```
+
+This turns
+
+```"properties": {
+        "walking_time": "1972.0"
+      },```
+
+into  
+
+```"properties": {
+        "walking_time": 1972.0
+      },```
+
+More details to come. 
 The heat map is currently available at https://github.com/skorasaurus/RTAHeatMap/tree/gh-pages
 Details of how to make the heat map will be added here. 
 
