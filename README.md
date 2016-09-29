@@ -14,7 +14,7 @@ Our project is currently using python 2.7
 4. Create virtualenv for this project ```virtualenv --no-site-packages venv```
 5. start your virtualenv by running ```source venv/bin/activate```
 6. run ```pip install -r requirements.txt```
-7. Sign up for an account at mapbox.com; obtain an API key. create a file named api_key.txt and place the api key in it and save. r ask RTAtracker channel in our slack. 
+7. Sign up for an account at mapbox.com; obtain an API key. create a file named api_key.txt and place the api key in it and save or ask for one in the RTAtracker channel in our slack. 
 
 To create the results, run generate.py. 
 
@@ -79,11 +79,42 @@ df = handler.routes_dataframe()
 df = handler.routes_dataframe_closest_stops()
 ```
 
-## HeatMap 
-The isochrone map is viewable for the moment at http://skorasaurus.github.io/RTAHeatMap/gh-pages/ 
-which displays the time, in minutes, for a person, to walk to the closest RTA transit stop. 
-The code is at: https://github.com/skorasaurus/RTAHeatMap/tree/gh-pages
-Details of how to make the heat map will be added here. 
+## Part 2: The Map
+
+The isochrone map is viewable at http://skorasaurus.github.io/RTAHeatMap/gh-pages/ 
+which displays the time, in minutes, for a person to walk to the closest RTA transit stop.
+
+The code for the map is at: https://github.com/skorasaurus/RTAHeatMap/tree/gh-pages 
+
+# Details of how to generate the isochrone map
+
+Your output from generate.py is now a CSV file (let's call it theresults.csv) with 3 columns, the latitude, longitude, and the walking_time column 
+(in seconds) that it takes to the closest transit stop. 
+
+First, we need to transform that CSV file into a geojson file. There are numerous ways to do this but 
+in our tutorial, we will use [csv2geojson](https://github.com/mapbox/csv2geojson) and the result geojson file will be theresults.geojson. 
+
+Now, we have a geojson file (theresults.geojson) but walking_time's values are as strings instead of an integer! So, we need to remove the strings (```"``) from the walking_time's values. 
+
+We'll need to do a search for the string ```"-?([0-9]+\.?[0-9]+)"``` and replace it with ```$1```
+
+This turns
+
+```"properties": {
+        "walking_time": "1972.0"
+      },```
+
+into  
+
+```"properties": {
+        "walking_time": 1972.0
+      },```
+
+There are additional steps needed, and will be added here soon. :) 
+
+
+The isochrone map is viewable at http://skorasaurus.github.io/RTAHeatMap/gh-pages/ which displays the time, in minutes, for a person, to walk to the closest RTA transit stop. 
+The code for the map is at: https://github.com/skorasaurus/RTAHeatMap/tree/gh-pages 
 
 ## Contributing
 
