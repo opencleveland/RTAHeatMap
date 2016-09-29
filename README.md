@@ -1,7 +1,7 @@
 # RTAHeatMap
 
 ## Purpose
-The purpose of this project is to generate walking distance data for a list of address to the nearest public transportation stops and then represent this data as a heatmap.
+The purpose of this project is to generate walking distance data for a list of address to the nearest public transportation stops and then represent this data as an isochrone map. 
 
 
 ## Set Up 
@@ -14,7 +14,7 @@ Our project is currently using python 2.7
 4. Create virtualenv for this project ```virtualenv --no-site-packages venv```
 5. start your virtualenv by running ```source venv/bin/activate```
 6. run ```pip install -r requirements.txt```
-7. Sign up for an account at mapbox.com; obtain an API key. create a file named api_key.txt and place the api key in it and save. r ask RTAtracker channel in our slack. 
+7. Sign up for an account at mapbox.com; obtain an API key. create a file named api_key.txt and place the api key in it and save or ask for one in the RTAtracker channel in our slack. 
 
 To create the results, run generate.py. 
 
@@ -79,7 +79,14 @@ df = handler.routes_dataframe()
 df = handler.routes_dataframe_closest_stops()
 ```
 
-## HeatMap 
+## Part 2: The Map
+
+The isochrone map is viewable at http://skorasaurus.github.io/RTAHeatMap/gh-pages/ 
+which displays the time, in minutes, for a person to walk to the closest RTA transit stop.
+
+The code for the map is at: https://github.com/skorasaurus/RTAHeatMap/tree/gh-pages 
+
+# Details of how to generate the isochrone map
 
 Your output from generate.py is now a CSV file (let's call it theresults.csv) with 3 columns, the latitude, longitude, and the walking_time column 
 (in seconds) that it takes to the closest transit stop. 
@@ -103,9 +110,11 @@ into
         "walking_time": 1972.0
       },```
 
-More details to come. 
-The heat map is currently available at https://github.com/skorasaurus/RTAHeatMap/tree/gh-pages
-Details of how to make the heat map will be added here. 
+There are additional steps needed, and will be added here soon. :) 
+
+
+The isochrone map is viewable at http://skorasaurus.github.io/RTAHeatMap/gh-pages/ which displays the time, in minutes, for a person, to walk to the closest RTA transit stop. 
+The code for the map is at: https://github.com/skorasaurus/RTAHeatMap/tree/gh-pages 
 
 ## Contributing
 
