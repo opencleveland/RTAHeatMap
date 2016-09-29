@@ -1,7 +1,7 @@
 # RTAHeatMap
 
 ## Purpose
-The purpose of this project is to generate walking distance data for a list of address to the nearest public transportation stops and then represent this data as a heatmap.
+The purpose of this project is to generate walking distance data for a list of address to the nearest public transportation stops and then represent this data as an isochrone map. 
 
 
 ## Set Up 
@@ -80,7 +80,9 @@ df = handler.routes_dataframe_closest_stops()
 ```
 
 ## HeatMap 
-The heat map is currently available at https://github.com/skorasaurus/RTAHeatMap/tree/gh-pages
+The isochrone map is viewable for the moment at http://skorasaurus.github.io/RTAHeatMap/gh-pages/ 
+which displays the time, in minutes, for a person, to walk to the closest RTA transit stop. 
+The code is at: https://github.com/skorasaurus/RTAHeatMap/tree/gh-pages
 Details of how to make the heat map will be added here. 
 
 ## Contributing
