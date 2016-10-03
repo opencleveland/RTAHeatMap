@@ -79,7 +79,7 @@
 
 
               // for others to get a brief update of why I'm using jquery see http://lyzidiamond.com/posts/external-geojson-and-leaflet-the-other-way      
-    $.getJSON("contours-v7-simplified5.geojson", function(data) {
+    $.getJSON("data/contours-v7-simplified5.geojson", function(data) {
         var thegeojson = L.geoJson(data, {
             style: t3hStyle,
             onEachFeature: function (tefeature, telayer) {
