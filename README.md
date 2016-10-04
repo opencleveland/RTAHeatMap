@@ -81,10 +81,10 @@ df = handler.routes_dataframe_closest_stops()
 
 ## Part 2: The Map
 
-The isochrone map is viewable at http://skorasaurus.github.io/RTAHeatMap/gh-pages/ 
-which displays the time, in minutes, for a person to walk to the closest RTA transit stop.
+The isochrone map is viewable at http://opencleveland.github.io/RTAHeatMap which displays the time, in minutes, for a person, to walk to the closest RTA transit stop. 
 
-The code for the map is at: https://github.com/skorasaurus/RTAHeatMap/tree/gh-pages 
+The code for this map is in the gh-pages branch. 
+
 
 # Details of how to generate the isochrone map
 
@@ -113,8 +113,6 @@ into
 There are additional steps needed, and will be added here soon. :) 
 
 
-The isochrone map is viewable at http://opencleveland.github.io/RTAHeatMap which displays the time, in minutes, for a person, to walk to the closest RTA transit stop. 
-The code for this map is in the gh-pages branch. 
 
 ## Contributing
 
