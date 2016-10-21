@@ -1,9 +1,9 @@
 class MapLocation:
     def __init__(self, latitude=0, longitude=0, id=0):
         if latitude > 90 or latitude < -90:
-            raise ValueError("latitude must be between -90 and 90")
+            raise ValueError("Error: latitude must be between -90 & 90. Latitude is %f" % float(latitude))
         if longitude > 180 or longitude < -180:
-            raise ValueError("longitude must be between -180 and 180")
+            raise ValueError("Error: longitude must be between -180 & 180. Longitude is %f" % float(longitude))
         self.latitude = latitude
         self.longitude = longitude
         self.id = id
