@@ -110,8 +110,22 @@ into
         "walking_time": 1972.0
       },```
 
-There are additional steps needed, and will be added here soon. :) 
+Now, we need to convert the geojson file of points into isochrone polygons. This is done in QGIS 
+using the Contours Plugin. 
 
+# Creating the Contours
+
+Open the geojson file (theresults.geojson) in QGIS. Then open the contours plugin. 
+
+Select walking_time as your data field, or an expression if you'd like the walking time in minutes the as shown in the image. 
+
+Select Filled Contours
+
+Also enter the values (your break points) that you wish to create your isochrone bands by.
+
+Run it! 
+
+You have your isochrone file (as a geojson file) to insert into your web map as you wish. 
 
 
 ## Contributing
