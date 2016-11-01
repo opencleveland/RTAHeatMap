@@ -119,6 +119,8 @@ Open the geojson file (theresults.geojson) in QGIS. Then open the contours plugi
 
 Select walking_time as your data field, or an expression if you'd like the walking time in minutes the as shown in the image. 
 
+![Qgis Contour plugin image](https://github.com/opencleveland/RTAHeatMap/blob/master/images/contour-qgis-menu.png)
+
 Select Filled Contours
 
 Also enter the values (your break points) that you wish to create your isochrone bands by.
@@ -127,6 +129,7 @@ Run it!
 
 You have your isochrone file (as a geojson file) to insert into your web map as you wish. 
 
+Our map is one example of inserting it into a web map https://github.com/opencleveland/RTAHeatMap/tree/gh-pages
 
 ## Contributing
 
