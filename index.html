@@ -35,6 +35,8 @@
 <body>
  <div id="mapid" style="width: 80%; height: 600px; border: 1px solid #ccc;"></div>
 
+
+
 <script>
 
 
@@ -98,14 +100,14 @@
       var div = L.DomUtil.create('div', 'info legend'),
         grades = [0, 1, 2, 3, 4],
         breakValues = [0, 5, 10, 15, 20], 
-        labels = [],
+        labels = ['Minutes to walk to the closest RTA transit stop:' + '<br>'],
         from, to; 
 
       for (var i = 0; i < grades.length; i++) {
         from = breakValues[i];
         to = breakValues[i+1];
        // to = breakValues[grades[i+1]];
-        labels.push(
+        labels.push( 
           '<i style="background:' + getFillColor(grades[i]) + '"></i> ' +
           from + (to ? '&ndash;' + to : '+'));
       }
